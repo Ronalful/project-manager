@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5000/project
+    username: dima
+    password: dima
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: projectNotification:com.example.project.kafka.ProjectNotification
+
+application:
+  config:
+    developer-url: http://localhost:8010/api/v1/developers
+    task-url: http://localhost:8030/api/v1/tasks
+    task-assignment-url: http://localhost:8030/api/v1/task-assignments
+
+server:
+  port: 8020

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Task Notification</title>
+</head>
+<h1>Task Notification</h1>
+<div>
+    <p>Dear <span th:text="${developer.firstname}"/> <span th:text="${developer.lastname}"/></p>
+    <p>Task "<span th:text="${taskTitle}"/>" in project "<span th:text="${project.name}"/>" has changed to <b><span th:text="${taskStatus}"/></b></p>
+
+</div>
+</html>

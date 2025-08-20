@@ -4,6 +4,7 @@ import com.example.project.exception.ProjectNotFoundException;
 import com.example.project.projectAssignment.ProjectAssignmentRequest;
 import com.example.project.projectAssignment.ProjectAssignmentService;
 import com.example.project.task.TaskClient;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ public class ProjectService {
     private final TaskClient taskClient;
     private final ProjectMapper mapper;
 
-
+    @Transactional
     public ProjectResponse create(ProjectRequest request) {
         var project = projectRepository.save(mapper.toProject(request));
         return mapper.fromProjectWithDevelopers(project);
@@ -36,6 +37,7 @@ public class ProjectService {
         return mapper.fromProjectWithDevelopers(project);
     }
 
+    @Transactional
     public void deleteById(Integer projectId) {
         var project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Project not found with id " + projectId));
@@ -55,6 +57,7 @@ public class ProjectService {
         tasks.forEach(task -> taskClient.deleteTaskById(task.id()));
     }
 
+    @Transactional
     public ProjectResponse update(ProjectUpdateRequest request) {
         var project = projectRepository.findById(request.id())
                 .orElseThrow(() -> new ProjectNotFoundException("Project not found with id " + request.id()));

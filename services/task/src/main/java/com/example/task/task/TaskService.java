@@ -9,6 +9,7 @@ import com.example.task.kafka.TaskProducer;
 import com.example.task.project.ProjectClient;
 import com.example.task.taskAssignment.TaskAssignmentRequest;
 import com.example.task.taskAssignment.TaskAssignmentService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class TaskService {
     private final DeveloperClient developerClient;
     private final TaskAssignmentService taskAssignmentService;
 
+    @Transactional
     public TaskResponse create(TaskRequest request) {
         if (!isProjectExistsWithId(request.projectId())) {
             throw new ProjectNotFoundException("Project not found with id " + request.projectId());
@@ -51,6 +53,7 @@ public class TaskService {
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with id " + taskId));
     }
 
+    @Transactional
     public void deleteById(Integer taskId) {
         var task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with id " + taskId));
@@ -70,6 +73,7 @@ public class TaskService {
                 .toList();
     }
 
+    @Transactional
     public TaskResponse update(TaskUpdateRequest request) {
         var task = taskRepository.findById(request.id())
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with id " + request.id()));

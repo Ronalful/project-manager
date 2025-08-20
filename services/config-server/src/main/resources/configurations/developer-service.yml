@@ -1,14 +1,21 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5000/developer
-    username: dima
-    password: dima
+    username: admin
+    password: admin
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+
+springdoc:
+  swagger-ui:
+    path: "/api/v1/developers/swagger-ui.html"
+  api-docs:
+    path: "/api/v1/developers/v3/api-docs"
 
 server:
   port: 8010

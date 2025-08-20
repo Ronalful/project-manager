@@ -14,6 +14,7 @@ import com.example.project.project.ProjectRepository;
 import com.example.project.task.TaskClient;
 import com.example.project.taskAssignment.TaskAssignmentClient;
 import com.example.project.taskAssignment.TaskAssignmentRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ public class ProjectAssignmentService {
     private final TaskClient taskClient;
     private final TaskAssignmentClient taskAssignmentClient;
 
+    @Transactional
     public void assignDeveloper(ProjectAssignmentRequest request) {
         var developer = developerClient.getDeveloperById(request.developerId())
                 .orElseThrow(() -> new DeveloperNotFoundException("Developer not found with id " + request.developerId()));
@@ -68,6 +70,7 @@ public class ProjectAssignmentService {
         ));
     }
 
+    @Transactional
     public void unassignDeveloper(ProjectAssignmentRequest request) {
         var project = projectRepository.findById(request.projectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project not found with id " + request.projectId()));

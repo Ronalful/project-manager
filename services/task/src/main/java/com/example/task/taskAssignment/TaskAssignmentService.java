@@ -11,6 +11,7 @@ import com.example.task.project.ProjectResponse;
 import com.example.task.project.ProjectWithDevelopersResponse;
 import com.example.task.task.Task;
 import com.example.task.task.TaskRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class TaskAssignmentService {
     private final ProjectClient projectClient;
     private final TaskProducer taskProducer;
 
-
+    @Transactional
     public void assignDeveloper(TaskAssignmentRequest request) {
         var developer = developerClient.getDeveloperById(request.developerId())
                 .orElseThrow(() -> new DeveloperNotFoundException("Developer not found with id " + request.developerId()));
@@ -80,7 +81,7 @@ public class TaskAssignmentService {
                 TaskOperation.UNASSIGNED
         ));
     }
-
+    @Transactional
     public void unassignDeveloper(TaskAssignmentRequest request) {
         var developer = developerClient.getDeveloperById(request.developerId())
                 .orElseThrow(() -> new DeveloperNotFoundException("Developer not found with id " + request.developerId()));

@@ -1,6 +1,7 @@
 package com.example.developer.developer;
 
 import com.example.developer.exception.DeveloperNotFoundException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ public class DeveloperService {
     private final DeveloperRepository repository;
     private final DeveloperMapper mapper;
 
+    @Transactional
     public DeveloperResponse create(DeveloperRequest request) {
         var developer = repository.save(mapper.toDeveloper(request));
         return mapper.fromDeveloper(developer);
@@ -30,10 +32,12 @@ public class DeveloperService {
                 .orElseThrow(() -> new DeveloperNotFoundException("Developer is not found with id " + developerId));
     }
 
+    @Transactional
     public void delete(Integer developerId) {
         repository.deleteById(developerId);
     }
 
+    @Transactional
     public DeveloperResponse update(@Valid DeveloperUpdateRequest request) {
         var developer = repository.findById(request.id())
                 .orElseThrow(() -> new DeveloperNotFoundException("Developer is not found with id " + request.id()));

@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5000/project
-    username: dima
-    password: dima
+    username: admin
+    password: admin
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -22,6 +22,12 @@ application:
     developer-url: http://localhost:8010/api/v1/developers
     task-url: http://localhost:8030/api/v1/tasks
     task-assignment-url: http://localhost:8030/api/v1/task-assignments
+
+springdoc:
+  swagger-ui:
+    path: "/api/v1/projects/swagger-ui.html"
+  api-docs:
+    path: "/api/v1/projects/v3/api-docs"
 
 server:
   port: 8020

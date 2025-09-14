@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5000/developer
-    username: admin
-    password: admin
+    url: jdbc:postgresql://host.docker.internal:${POSTGRESQL_PORT}/developer
+    username: ${POSTGRESQL_LOGIN}
+    password: ${POSTGRESQL_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -10,12 +10,8 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
-
 springdoc:
   swagger-ui:
     path: "/api/v1/developers/swagger-ui.html"
   api-docs:
     path: "/api/v1/developers/v3/api-docs"
-
-server:
-  port: 8010

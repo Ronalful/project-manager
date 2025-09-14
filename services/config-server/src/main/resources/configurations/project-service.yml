@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5000/project
-    username: admin
-    password: admin
+    url: jdbc:postgresql://host.docker.internal:${POSTGRESQL_PORT}/project
+    username: ${POSTGRESQL_LOGIN}
+    password: ${POSTGRESQL_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -11,7 +11,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   kafka:
     producer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: kafka:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
@@ -19,15 +19,12 @@ spring:
 
 application:
   config:
-    developer-url: http://localhost:8010/api/v1/developers
-    task-url: http://localhost:8030/api/v1/tasks
-    task-assignment-url: http://localhost:8030/api/v1/task-assignments
+    developer-url: http://developer-service:8080/api/v1/developers
+    task-url: http://task-service:8080/api/v1/tasks
+    task-assignment-url: http://task-service:8080/api/v1/task-assignments
 
 springdoc:
   swagger-ui:
     path: "/api/v1/projects/swagger-ui.html"
   api-docs:
     path: "/api/v1/projects/v3/api-docs"
-
-server:
-  port: 8020

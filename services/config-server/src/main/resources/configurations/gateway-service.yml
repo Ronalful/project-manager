@@ -6,25 +6,23 @@ spring:
           enabled: true
       routes:
         - id: developer-service
-          uri: lb:http://DEVELOPER-SERVICE
+          uri: http://developer-service:8080
           predicates:
             - Path=/api/v1/developers/**
         - id: project-service
-          uri: lb:http://PROJECT-SERVICE
+          uri: http://project-service:8080
           predicates:
             - Path=/api/v1/projects/**
         - id: project-assignment-service
-          uri: lb:http://PROJECT-SERVICE
+          uri: http://project-service:8080
           predicates:
             - Path=/api/v1/project-assignments/**
         - id: task-service
-          uri: lb:http://TASK-SERVICE
+          uri: http://task-service:8080
           predicates:
             - Path=/api/v1/tasks/**
         - id: task-assignment-service
-          uri: lb:http://TASK-SERVICE
+          uri: http://task-service:8080
           predicates:
             - Path=/api/v1/task-assignments/**
-server:
-  port: 8222
 

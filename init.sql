@@ -1,0 +1,3 @@
+CREATE DATABASE developer;
+CREATE DATABASE project;
+CREATE DATABASE task;

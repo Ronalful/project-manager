@@ -1,15 +1,116 @@
 services:
+  config-service:
+    build:
+      context: ./services/config-server
+    volumes:
+      - ./services/config-server:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8888:8080"
+    command: mvn spring-boot:run
+    networks:
+      - microservices-net
+
+  discovery-service:
+    build:
+      context: ./services/discovery
+    volumes:
+      - ./services/discovery:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8761:8080"
+    command: ./wait-for.sh config-service 8080 mvn spring-boot:run
+    networks:
+      - microservices-net
+
+  developer-service:
+    build:
+      context: ./services/developer
+    volumes:
+      - ./services/developer:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8010:8080"
+    environment:
+      - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_PORT=${POSTGRESQL_PORT}
+    command: ./wait-for.sh discovery-service 8080 mvn spring-boot:run
+    networks:
+      - microservices-net
+
+  project-service:
+    build:
+      context: ./services/project
+    volumes:
+      - ./services/project:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8020:8080"
+    environment:
+      - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_PORT=${POSTGRESQL_PORT}
+    command: ./wait-for.sh discovery-service 8080 mvn spring-boot:run
+    networks:
+      - microservices-net
+
+  task-service:
+    build:
+      context: ./services/task
+    volumes:
+      - ./services/task:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8030:8080"
+    environment:
+      - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_PORT=${POSTGRESQL_PORT}
+    command: ./wait-for.sh discovery-service 8080 mvn spring-boot:run
+    networks:
+      - microservices-net
+
+  notification-service:
+    build:
+      context: ./services/notification
+    volumes:
+      - ./services/notification:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8040:8080"
+    environment:
+      - MONGODB_LOGIN=${MONGODB_LOGIN}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_PORT=${MONGODB_PORT}
+    command: ./wait-for.sh discovery-service 8080 mvn spring-boot:run
+    networks:
+      - microservices-net
+
+  gateway-service:
+    build:
+      context: ./services/gateway
+    volumes:
+      - ./services/gateway:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8222:8080"
+    command: ./wait-for.sh discovery-service 8080 mvn spring-boot:run
+    networks:
+      - microservices-net
+
   postgres:
     container_name: postgresql
     image: postgres
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: ${POSTGRESQL_LOGIN}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - 5000:5432
+      - ${POSTGRESQL_PORT}:5432
     networks:
       - microservices-net
     restart: unless-stopped
@@ -50,7 +151,7 @@ services:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
@@ -70,6 +171,8 @@ services:
     ports:
       - 1080:1080
       - 1025:1025
+    networks:
+      - microservices-net
 
   zipkin:
     container_name: zipkin

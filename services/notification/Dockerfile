@@ -5,3 +5,5 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 COPY wait-for.sh ./wait-for.sh
+
+RUN chmod +x wait-for.sh

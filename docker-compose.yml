@@ -87,6 +87,26 @@ services:
     networks:
       - microservices-net
 
+  auth-service:
+    build:
+      context: ./services/auth
+    volumes:
+      - ./services/auth:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8050:8080"
+    environment:
+      - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_PORT=${POSTGRESQL_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
+      - REFRESH_TOKEN_EXPIRATION=${REFRESH_TOKEN_EXPIRATION}
+      - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
+    command: ./wait-for.sh -t 0 discovery-service:8080 -- mvn spring-boot:run
+    networks:
+      - microservices-net
+
   gateway-service:
     build:
       context: ./services/gateway
@@ -95,6 +115,11 @@ services:
       - ~/.m2:/root/.m2
     ports:
       - "8222:8080"
+    environment:
+      - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_PORT=${POSTGRESQL_PORT}
+      - JWT_SECRET=${JWT_SECRET}
     command: ./wait-for.sh -t 0 discovery-service:8080 -- mvn spring-boot:run
     networks:
       - microservices-net

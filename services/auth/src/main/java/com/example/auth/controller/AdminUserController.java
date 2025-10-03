@@ -1,7 +1,7 @@
 package com.example.auth.controller;
 
-import com.example.auth.dto.user.CreateUserRequest;
-import com.example.auth.service.user.AdminUserService;
+import com.example.auth.dto.CreateUserRequest;
+import com.example.auth.service.AdminUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;

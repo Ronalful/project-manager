@@ -30,6 +30,7 @@ public class ApplicationConfig {
                         .lastname("admin")
                         .email("admin@admin.com")
                         .activated(false)
+                        .passwordExpired(false)
                         .password(passwordEncoder().encode("admin"))
                         .role(Role.ADMIN)
                         .build();

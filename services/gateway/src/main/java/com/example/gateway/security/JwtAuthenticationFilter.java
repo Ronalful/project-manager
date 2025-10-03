@@ -77,7 +77,15 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                                         return chain.filter(mutatedExchange);
                                     }
 
+                                    if (routeValidator.isResetPasswordEndpoint(path)) {
+                                        return chain.filter(mutatedExchange);
+                                    }
+
                                     if (!user.activated()) {
+                                        return onError(exchange, HttpStatus.UNAUTHORIZED);
+                                    }
+
+                                    if (user.passwordExpired()) {
                                         return onError(exchange, HttpStatus.UNAUTHORIZED);
                                     }
 

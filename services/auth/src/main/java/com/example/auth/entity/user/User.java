@@ -27,6 +27,7 @@ public class User implements UserDetails {
 
     private String secretPhrase;
     private boolean activated;
+    private boolean passwordExpired;
 
     @Enumerated(EnumType.STRING)
     private Role role;

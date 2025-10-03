@@ -7,6 +7,7 @@ public record UserDTO(
         String email,
         String password,
         Role role,
-        Boolean activated
+        Boolean activated,
+        Boolean passwordExpired
 ) {
 }

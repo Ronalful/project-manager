@@ -11,7 +11,8 @@ public class RouteValidator {
     public static final List<String> openApiEndpoints = new ArrayList<>(List.of(
             "/api/v1/auth/register",
             "/api/v1/auth/login",
-            "/api/v1/auth/pre-activate"
+            "/api/v1/auth/initiate-activation",
+            "/api/v1/auth/initiate-reset-password"
     ));
 
     static {
@@ -87,6 +88,10 @@ public class RouteValidator {
     }
 
     public boolean isActivationEndpoint(String path) {
-        return path.equals("/api/v1/auth/activate");
+        return path.equals("/api/v1/auth/confirm-activation");
+    }
+
+    public boolean isResetPasswordEndpoint(String path) {
+        return path.equals("/api/v1/auth/confirm-reset-password");
     }
 }

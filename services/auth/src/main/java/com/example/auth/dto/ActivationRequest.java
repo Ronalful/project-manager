@@ -3,6 +3,7 @@ package com.example.auth.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
+@Schema(description = "Запрос на активацию пользователя")
 public record ActivationRequest(
         @Schema(
                 description = "Секретная фраза пользователя",

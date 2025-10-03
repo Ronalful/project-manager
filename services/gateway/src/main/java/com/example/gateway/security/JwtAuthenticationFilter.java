@@ -64,6 +64,31 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
                         return authClient.getUserByEmail(userEmail)
                                 .flatMap(user -> {
+                                    ServerHttpRequest mutatedRequest = exchange.getRequest()
+                                            .mutate()
+                                            .header("X-User-Email", userEmail)
+                                            .build();
+
+                                    ServerWebExchange mutatedExchange = exchange.mutate()
+                                            .request(mutatedRequest)
+                                            .build();
+
+                                    if (routeValidator.isActivationEndpoint(path)) {
+                                        return chain.filter(mutatedExchange);
+                                    }
+
+                                    if (routeValidator.isResetPasswordEndpoint(path)) {
+                                        return chain.filter(mutatedExchange);
+                                    }
+
+                                    if (!user.activated()) {
+                                        return onError(exchange, HttpStatus.UNAUTHORIZED);
+                                    }
+
+                                    if (user.passwordExpired()) {
+                                        return onError(exchange, HttpStatus.UNAUTHORIZED);
+                                    }
+
                                     String role = user.role().getAuthority().replace("ROLE_", "");
 
                                     boolean authorized = routeValidator.isEndpointAllowedForRole(path, role);
@@ -71,7 +96,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                                         return onError(exchange, HttpStatus.FORBIDDEN);
                                     }
 
-                                    return chain.filter(exchange);
+                                    return chain.filter(mutatedExchange);
                                 });
                     });
         };

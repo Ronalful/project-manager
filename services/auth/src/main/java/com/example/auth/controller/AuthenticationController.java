@@ -1,8 +1,6 @@
 package com.example.auth.controller;
 
-import com.example.auth.dto.AuthenticationRequest;
-import com.example.auth.dto.AuthenticationResponse;
-import com.example.auth.dto.RegisterRequest;
+import com.example.auth.dto.*;
 import com.example.auth.entity.user.User;
 import com.example.auth.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,21 +27,56 @@ public class AuthenticationController {
     private final AuthenticationService service;
 
     @Operation(
-            summary = "Регистрация нового пользователя",
-            description = "Создание нового пользователя и выдача токена доступа"
-    )
-    @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody @Valid RegisterRequest request) {
-        return ResponseEntity.ok(service.register(request));
-    }
-
-    @Operation(
             summary = "Вход пользователя",
             description = "Аутентификация пользователя по логину и паролю с выдачей JWT токена"
     )
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest request) {
         return ResponseEntity.ok(service.login(request));
+    }
+
+    @Operation(
+            summary = "Активация пользователя",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PostMapping("/confirm-activation")
+    public ResponseEntity<?> confirmActivation(
+            @RequestHeader("X-User-Email") String userEmail,
+            @RequestBody @Valid ActivationRequest request
+    ) {
+        service.confirmActivation(userEmail, request);
+        return ResponseEntity.accepted().build();
+    }
+
+    @Operation(
+            summary = "Начало активации пользователя",
+            description = "Проверка пользователя, что он ни разу не заходил до этого, и выдача ему временного jwt токена"
+    )
+    @PostMapping("/initiate-activation")
+    public ResponseEntity<AuthenticationResponse> initiateActivation(@RequestBody @Valid AuthenticationRequest request) {
+        return ResponseEntity.ok(service.initiateActivation(request));
+    }
+
+    @Operation(
+            summary = "Установка нового пароля пользователя",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PostMapping("/confirm-reset-password")
+    public ResponseEntity<?> confirmResetPassword(
+            @RequestHeader("X-User-Email") String userEmail,
+            @RequestBody @Valid ResetPasswordRequest request
+    ) {
+        service.confirmResetPassword(userEmail, request);
+        return ResponseEntity.accepted().build();
+    }
+
+    @Operation(
+            summary = "Начало сброса пароля пользователя",
+            description = "Проверка секретного слова пользователя и выдача ему временного jwt токена"
+    )
+    @PostMapping("/initiate-reset-password")
+    public ResponseEntity<AuthenticationResponse> initiateResetPassword(@RequestBody @Valid InitiateResetPasswordRequest request) {
+        return ResponseEntity.ok(service.initiateResetPassword(request));
     }
 
     @Operation(
@@ -74,11 +107,17 @@ public class AuthenticationController {
         return ResponseEntity.accepted().build();
     }
 
+    @Operation(
+            summary = "Получить пользователя по email"
+    )
     @GetMapping("/user/{email}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
         return ResponseEntity.ok(service.getUserByEmail(email));
     }
 
+    @Operation(
+            summary = "Проверка валидности jwt токена"
+    )
     @GetMapping("/is-token-valid/{token}")
     public ResponseEntity<Boolean> isTokenValid(@PathVariable String token) {
         return ResponseEntity.ok(service.isTokenValid(token));

@@ -10,7 +10,9 @@ import java.util.Map;
 public class RouteValidator {
     public static final List<String> openApiEndpoints = new ArrayList<>(List.of(
             "/api/v1/auth/register",
-            "/api/v1/auth/login"
+            "/api/v1/auth/login",
+            "/api/v1/auth/initiate-activation",
+            "/api/v1/auth/initiate-reset-password"
     ));
 
     static {
@@ -44,7 +46,8 @@ public class RouteValidator {
                     "/api/v1/developers/**",
                     "/api/v1/projects/**",
                     "/api/v1/tasks/**",
-                    "/api/v1/auth/**"
+                    "/api/v1/auth/**",
+                    "/api/v1/user/admin/**"
             ),
             "USER", List.of(
                     "/api/v1/developers/**",
@@ -82,5 +85,13 @@ public class RouteValidator {
 
     public boolean isRefreshTokenEndpoint(String path) {
         return path.equals("/api/v1/auth/refresh-token");
+    }
+
+    public boolean isActivationEndpoint(String path) {
+        return path.equals("/api/v1/auth/confirm-activation");
+    }
+
+    public boolean isResetPasswordEndpoint(String path) {
+        return path.equals("/api/v1/auth/confirm-reset-password");
     }
 }

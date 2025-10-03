@@ -5,8 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 @Schema(description = "Запрос на регистрацию нового пользователя")
-public record RegisterRequest(
-
+public record CreateUserRequest(
         @Schema(
                 description = "Имя пользователя",
                 example = "Иван",
@@ -38,6 +37,5 @@ public record RegisterRequest(
         )
         @NotBlank
         String password
-
 ) {
 }

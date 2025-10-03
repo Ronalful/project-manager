@@ -1,10 +1,9 @@
 package com.example.auth.service;
 
+import com.example.auth.dto.ActivationRequest;
 import com.example.auth.dto.AuthenticationRequest;
 import com.example.auth.dto.AuthenticationResponse;
-import com.example.auth.dto.RegisterRequest;
 import com.example.auth.entity.token.Token;
-import com.example.auth.entity.user.Role;
 import com.example.auth.entity.user.User;
 import com.example.auth.exception.AuthException;
 import com.example.auth.exception.UserNotFoundException;
@@ -14,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ProblemDetail;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,31 +27,11 @@ import java.io.IOException;
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
-    private final PasswordEncoder passwordEncoder;
     private final EncryptionService encryptionService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
-
-    public AuthenticationResponse register(RegisterRequest request) {
-        var user = User.builder()
-                .firstname(request.firstname())
-                .lastname(request.lastname())
-                .email(request.email())
-                .password(passwordEncoder.encode(request.password()))
-                .role(Role.USER)
-                .build();
-        var isEmailUsed = userRepository.findByEmail(request.email()).isPresent();
-        if (isEmailUsed) {
-            throw new AuthException("Email is already in use");
-        }
-
-        var savedUser = userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        saveUserToken(savedUser, jwtToken);
-        return new AuthenticationResponse(jwtToken, refreshToken);
-    }
+    private final PasswordEncoder passwordEncoder;
 
     public AuthenticationResponse login(AuthenticationRequest request) {
         authenticationManager.authenticate(
@@ -64,11 +42,51 @@ public class AuthenticationService {
         );
         var user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (!user.isActivated()) {
+            throw new AuthException("User is disabled");
+        }
+
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
         return new AuthenticationResponse(jwtToken, refreshToken);
+    }
+
+    public AuthenticationResponse preActivate(AuthenticationRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.email(),
+                        request.password()
+                )
+        );
+        var user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        if (user.isActivated()) {
+            throw new AuthException("User is enabled");
+        }
+
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+        revokeAllUserTokens(user);
+        saveUserToken(user, jwtToken);
+        return new AuthenticationResponse(jwtToken, refreshToken);
+    }
+
+    public void activate(String userEmail, ActivationRequest request) {
+        var user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (user.isActivated()) {
+            throw new AuthException("User is activated");
+        }
+
+        user.setActivated(true);
+        user.setSecretPhrase(encryptionService.encrypt(request.secretPhrase()));
+        user.setPassword(passwordEncoder.encode(request.password()));
+
+        userRepository.save(user);
     }
 
     public void refreshToken(

@@ -1,7 +1,10 @@
 package com.example.auth.config;
 
+import com.example.auth.entity.user.Role;
+import com.example.auth.entity.user.User;
 import com.example.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +20,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
     private final UserRepository userRepository;
+
+    @Bean
+    public CommandLineRunner init(UserRepository userRepository) {
+        return args -> {
+            if (userRepository.count() == 0) {
+                User user = User.builder()
+                        .firstname("admin")
+                        .lastname("admin")
+                        .email("admin@admin.com")
+                        .activated(false)
+                        .password(passwordEncoder().encode("admin"))
+                        .role(Role.ADMIN)
+                        .build();
+                userRepository.save(user);
+                System.out.println("Default user created:\nemail - admin@admin.com\npassword - admin");
+            }
+        };
+    }
 
     @Bean
     public UserDetailsService userDetailsService() {

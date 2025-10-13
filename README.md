@@ -89,6 +89,7 @@ npm install
 ### Запустили в режиме разработки (всегда)
 
 ```sh
+cd frontend
 npm run dev
 ```
 

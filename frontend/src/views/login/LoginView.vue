@@ -21,8 +21,8 @@ import '../../assets/styles/main.css'
                 v-model="formData.email"
                 type="text"
                 placeholder="Email"/>
+            <p v-if="errors.email" class="error">{{ errors.email }}</p>
           </div>
-          <p v-if="errors.email" class="error">{{ errors.email }}</p>
 
           <div class="login-form-group">
             <input
@@ -32,8 +32,8 @@ import '../../assets/styles/main.css'
                 type="password"
                 placeholder="Пароль"
             />
+            <p v-if="errors.password" class="error">{{ errors.password }}</p>
           </div>
-          <p v-if="errors.password" class="error">{{ errors.password }}</p>
 
           <button
               class="submit-button"

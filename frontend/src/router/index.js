@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 import HomeView from "@/views/HomeView.vue";
 
 const routes = [
@@ -15,7 +15,7 @@ const routes = [
     {
         path: '/login/forgot',
         name: 'ForgotPassword',
-        component: () => import('../views/login/ForgotView.vue')
+        component: () => import('../views/login/ForgotView.vue'),
     },
 ]
 

@@ -3,10 +3,11 @@ import '../../assets/styles/main.css'
 </script>
 
 <template>
-  <div v-if="!isAnswer" class="login-main-container recovery">
+  <div v-if="!isChangePassword && !isSuccess" class="login-main-container recovery">
     <div class="login-container">
       <h2 class="login-second-title">Восстановление пароля</h2>
       <form @submit.prevent="handleRecovery">
+        <div class="access-token" hidden></div>
         <p v-if="errors.incorrect" class="error title">{{ errors.incorrect }}</p>
         <div class="login-form-group-container">
           <div class="login-form-group">
@@ -34,7 +35,7 @@ import '../../assets/styles/main.css'
               class="submit-button"
               type="submit"
           >
-            Отправить запрос
+            Восстановить
           </button>
 
         </div>
@@ -43,10 +44,43 @@ import '../../assets/styles/main.css'
     </div>
   </div>
 
-  <div v-if="isAnswer" class="login-main-container answer">
+  <div v-if="isChangePassword" class="login-main-container answer">
+    <form @submit.prevent="handleChangePassword">
+      <div class="login-container answer">
+        <div class="login-form-group">
+          <input
+              class="field"
+              id="password"
+              v-model="recoveryFormData.password"
+              type="password"
+              placeholder="Пароль"
+          />
+          <p v-if="errors.password" class="error">{{ errors.password }}</p>
+        </div>
+        <div class="login-form-group">
+          <input
+              class="field"
+              id="confirmPassword"
+              v-model="recoveryFormData.confirmPassword"
+              type="password"
+              placeholder="Подтвердите пароль"
+          />
+          <p v-if="errors.confirmPassword" class="error">{{ errors.confirmPassword }}</p>
+        </div>
+          <button
+              class="submit-button"
+              type="submit"
+          >
+            Сменить пароль
+          </button>
+      </div>
+    </form>
+  </div>
+
+  <div v-if="isSuccess" class="login-main-container answer">
     <div class="login-container answer">
       <div class="answer-message">
-        <p> Запрос на восстановление пароля отправлен администратору. Дождитесь ответа на почту. </p>
+        <p> Пароль восстановлен! </p>
       </div>
       <div class="goback-button">
         <a
@@ -68,8 +102,13 @@ export default {
         email: '',
         secret: '',
       },
+      recoveryFormData: {
+        password: '',
+        confirmPassword: '',
+      },
       errors: {},
-      isAnswer: false
+      isSuccess: false,
+      isChangePassword: false,
     };
   },
   methods: {
@@ -81,12 +120,21 @@ export default {
 
           // запрос на бэк
 
-          this.isAnswer = true;
-
+          this.isChangePassword = true;
         }
       }
+    },
 
+    handleChangePassword() {
+      this.errors = {};
 
+      if (this.validatePassword() && this.checkPasswordCompliance()) {
+
+        // запрос на бэк
+
+        this.isChangePassword = false;
+        this.isSuccess = true;
+      }
     },
 
     validateEmail() {
@@ -115,6 +163,33 @@ export default {
         return false;
       } else {
         secretField.classList.remove('field-error');
+        return true;
+      }
+    },
+
+    validatePassword() {
+      const passwordField = document.getElementById('password');
+
+      if (!this.recoveryFormData.password) {
+        this.errors.password = 'Введите пароль';
+        passwordField.classList.add('field-error');
+        return false;
+      } else {
+        passwordField.classList.remove('field-error');
+        return true;
+      }
+    },
+
+    checkPasswordCompliance() {
+      const confirmPasswordField = document.getElementById('confirmPassword');
+
+      if (this.recoveryFormData.password !== this.recoveryFormData.confirmPassword) {
+        console.log('не');
+        this.errors.confirmPassword = 'Пароли не совпадают';
+        confirmPasswordField.classList.add('field-error');
+        return false;
+      } else {
+        confirmPasswordField.classList.remove('field-error');
         return true;
       }
     }

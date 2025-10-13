@@ -75,6 +75,7 @@ docker-compose down
 # Разворачивание фронта локально
 
 ### Установили npm (при первом запуске)
+
 ```sh
 npm install
 ```
@@ -82,6 +83,7 @@ npm install
 ### Запустили в режиме разработки (всегда)
 
 ```sh
+cd frontend
 npm run dev
 ```
 

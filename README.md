@@ -39,6 +39,7 @@ Zipkin для распределенного трейсинга, а также �
 - Developer – http://localhost:8222/api/v1/developers/swagger-ui.html
 - Project – http://localhost:8222/api/v1/projects/swagger-ui.html
 - Task – http://localhost:8222/api/v1/tasks/swagger-ui.html
+- Auth – http://localhost:8222/api/v1/auth/swagger-ui.html
 
 # Установка для Windows
 

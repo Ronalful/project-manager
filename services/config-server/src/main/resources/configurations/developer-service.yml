@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://host.docker.internal:${POSTGRESQL_PORT}/developer
+    url: jdbc:postgresql://postgres:5432/developer
     username: ${POSTGRESQL_LOGIN}
     password: ${POSTGRESQL_PASSWORD}
     driver-class-name: org.postgresql.Driver

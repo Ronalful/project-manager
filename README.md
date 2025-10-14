@@ -39,24 +39,40 @@ Zipkin для распределенного трейсинга, а также �
 - Developer – http://localhost:8222/api/v1/developers/swagger-ui.html
 - Project – http://localhost:8222/api/v1/projects/swagger-ui.html
 - Task – http://localhost:8222/api/v1/tasks/swagger-ui.html
+- Auth – http://localhost:8222/api/v1/auth/swagger-ui.html
 
 # Установка для Windows
 
 1. Ввести команду (в проекте bash скрипты, актуально для Windows пользователей)
-```
+```sh
 git config --global core.autocrlf false
 ```
 2. Склонировать проект через git
 3. В .env файле ввести параметры PostgreSQL и MondoDB
 4. В корне проекта ввести комманду (необходимо заранее установить Docker):
-```
+```sh
 docker-compose up -d
 ```
 
 ### Дополнительно
 Остановить docker:
-```
+```sh
 docker-compose down
+```
+
+# Установка для Linux
+
+1. Склонировать проект через git
+2. В .env файле ввести параметры PostgreSQL и MondoDB
+3. В корне проекта ввести комманду (необходимо заранее установить Docker и Docker-compose):
+```sh
+sudo docker-compose up -d
+```
+
+### Дополнительно
+Остановить docker:
+```sh
+sudo docker-compose down
 ```
 # Архитектура
 

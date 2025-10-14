@@ -2,97 +2,70 @@ services:
   config-service:
     build:
       context: ./services/config-server
-    volumes:
-      - ./services/config-server:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8888:8080"
-    command: mvn spring-boot:run
     networks:
       - microservices-net
 
   discovery-service:
     build:
       context: ./services/discovery
-    volumes:
-      - ./services/discovery:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8761:8080"
-    command: ./wait-for.sh -t 0 config-service:8080 -- mvn spring-boot:run
     networks:
       - microservices-net
 
   developer-service:
     build:
       context: ./services/developer
-    volumes:
-      - ./services/developer:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8010:8080"
     environment:
       - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
       - POSTGRESQL_PORT=${POSTGRESQL_PORT}
-    command: ./wait-for.sh -t 0 discovery-service:8080 -- mvn spring-boot:run
     networks:
       - microservices-net
 
   project-service:
     build:
       context: ./services/project
-    volumes:
-      - ./services/project:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8020:8080"
     environment:
       - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
       - POSTGRESQL_PORT=${POSTGRESQL_PORT}
-    command: ./wait-for.sh -t 0 discovery-service:8080 -- mvn spring-boot:run
     networks:
       - microservices-net
 
   task-service:
     build:
       context: ./services/task
-    volumes:
-      - ./services/task:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8030:8080"
     environment:
       - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
       - POSTGRESQL_PORT=${POSTGRESQL_PORT}
-    command: ./wait-for.sh -t 0 discovery-service:8080 -- mvn spring-boot:run
     networks:
       - microservices-net
 
   notification-service:
     build:
       context: ./services/notification
-    volumes:
-      - ./services/notification:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8040:8080"
     environment:
       - MONGODB_LOGIN=${MONGODB_LOGIN}
       - MONGODB_PASSWORD=${MONGODB_PASSWORD}
       - MONGODB_PORT=${MONGODB_PORT}
-    command: ./wait-for.sh -t 0 discovery-service:8080 -- mvn spring-boot:run
     networks:
       - microservices-net
 
   auth-service:
     build:
       context: ./services/auth
-    volumes:
-      - ./services/auth:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8050:8080"
     environment:
@@ -103,16 +76,12 @@ services:
       - JWT_EXPIRATION=${JWT_EXPIRATION}
       - REFRESH_TOKEN_EXPIRATION=${REFRESH_TOKEN_EXPIRATION}
       - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
-    command: ./wait-for.sh -t 0 discovery-service:8080 -- mvn spring-boot:run
     networks:
       - microservices-net
 
   gateway-service:
     build:
       context: ./services/gateway
-    volumes:
-      - ./services/gateway:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8222:8080"
     environment:
@@ -120,20 +89,18 @@ services:
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
       - POSTGRESQL_PORT=${POSTGRESQL_PORT}
       - JWT_SECRET=${JWT_SECRET}
-    command: ./wait-for.sh -t 0 discovery-service:8080 -- mvn spring-boot:run
     networks:
       - microservices-net
 
   postgres:
     container_name: postgresql
-    image: postgres
+    build: .
     environment:
       POSTGRES_USER: ${POSTGRESQL_LOGIN}
       POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - ${POSTGRESQL_PORT}:5432
     networks:

@@ -12,6 +12,7 @@ import '../../assets/styles/main.css'
           и
           <a href="#secret">секретное слово</a>
           для восстановления аккаунта</h3>
+        <p v-if="errors.others" class="error title">{{ errors.others }}</p>
         <div class="login-form-group">
           <input
               class="field"
@@ -27,10 +28,10 @@ import '../../assets/styles/main.css'
               class="field"
               id="secret"
               v-model="activationData.secret"
-              type="password"
+              type="text"
               placeholder="Секретное слово"
           />
-          <p v-if="errors.confirmPassword" class="error">{{ errors.confirmPassword }}</p>
+          <p v-if="errors.secret" class="error">{{ errors.secret }}</p>
         </div>
         <button
             class="submit-button"
@@ -44,6 +45,8 @@ import '../../assets/styles/main.css'
 </template>
 
 <script>
+import {authService} from "@/services/auth/index.js";
+
 export default {
   data() {
     return {
@@ -55,9 +58,48 @@ export default {
     }
   },
   methods:{
-    confirmActivationHandle(){
+    async confirmActivationHandle(){
+      this.errors = {}
 
-    }
+      if (!this.validateSecret() || !this.validatePassword()) {
+        return;
+      }
+
+      try {
+        const response = await authService.confirmActivation({
+          secret: this.activationData.secret,
+          password: this.activationData.password
+        })
+      } catch (error){
+        this.errors.others = error.response?.data?.message || 'Ошибка активации аккаунта' //
+      }
+    },
+
+    validateSecret() {
+      const secretField = document.getElementById('secret');
+
+      if (!this.activationData.secret) {
+        this.errors.secret = 'Введите секретное слово';
+        secretField.classList.add('field-error');
+        return false;
+      } else {
+        secretField.classList.remove('field-error');
+        return true;
+      }
+    },
+
+    validatePassword() {
+      const passwordField = document.getElementById('password');
+
+      if (!this.activationData.password) {
+        this.errors.password = 'Введите пароль';
+        passwordField.classList.add('field-error');
+        return false;
+      } else {
+        passwordField.classList.remove('field-error');
+        return true;
+      }
+    },
   }
 
 }

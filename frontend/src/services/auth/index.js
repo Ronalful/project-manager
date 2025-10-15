@@ -12,9 +12,10 @@ export const authService = {
             console.log('Login error:', error.response?.status, error.response?.data)
             // Проверяем, что это неактивированный аккаунт
             if (error.response?.status === 400) {
-                const access_token = await this.initiateActivation({ email, password })
+                const data = await this.initiateActivation({ email, password })
 
-                sessionStorage.setItem('activation_token', access_token) // Токен удалится при закрытии вкладки
+                sessionStorage.setItem('activation_token', data.accessToken) // Токен удалится при закрытии вкладки
+                localStorage.setItem('refresh_token', data.refreshToken) // Долгосрочный
                 sessionStorage.setItem('pending_activation_email', email)
 
                 router.push('/login/activate')
@@ -42,15 +43,22 @@ export const authService = {
     async initiateActivation({email, password}) {
         try {
             const response = await apiClient.post('/auth-api/initiate-activation', { email, password })
-            return response.data.accessToken
+            return response.data
         } catch (error) {
             console.error('Activation initiation failed:', error)
             throw error
         }
     },
 
-    confirmActivation({secret, password}) {
-        return apiClient.post('/auth-api/confirm-activation', {secret, password})
+    async confirmActivation({secret, password}) {
+        try {
+            const response = await apiClient.post('/auth-api/confirm-activation', {secret, password})
+            router.push('/')
+            return {success: true, data: response.data}
+        } catch (error) {
+            console.error('Activation initiation failed:', error)
+            throw error
+        }
     },
 
 }

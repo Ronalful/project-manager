@@ -57,7 +57,7 @@
     background-color: var(--additional); /* Цвет кнопки при наведении */
 }
 
-a.forgot-button {
+.forgot-button {
     display: block;
     text-align: center;
     margin-top: 10px;
@@ -65,8 +65,10 @@ a.forgot-button {
     text-decoration: none;
 }
 
-a.forgot-button:hover {
+.forgot-button:hover {
     text-shadow: var(--main-color) 1px 0 10px;
+    color: var(--gray);
+    text-decoration: none;
 }
 
 .error {

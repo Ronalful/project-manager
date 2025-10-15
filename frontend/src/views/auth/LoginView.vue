@@ -58,7 +58,7 @@ import '../../assets/styles/main.css'
 </template>
 
 <script>
-import {authService} from '@/services/authService.js'
+import {authService} from '@/services/auth'
 export default {
   data() {
     return {
@@ -82,7 +82,6 @@ export default {
           email: this.formData.email,
           password: this.formData.password
         })
-        localStorage.access_token = response.data.accessToken
       } catch (error){
         if (!error.requiresActivation) {
           if(!error.incorrectLoginPassword){

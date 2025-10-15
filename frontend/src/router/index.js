@@ -5,29 +5,47 @@ const routes = [
     {
         path: '/',
         name: 'Home',
-        component: HomeView
+        component: HomeView // тут будет основной шаблон
     },
     {
         path: '/login',
-        name: 'Login',
-        component: () => import('../views/login/LoginView.vue'),
+        component: () => import('@/views/auth/AuthLayout.vue'),
+        children: [
+            {
+                path: '',
+                name: 'Login',
+                component: () => import('@/views/auth/LoginView.vue'),
+            },
+            {
+                path: 'forgot',
+                name: 'ForgotPassword',
+                component: () => import('@/views/auth/ForgotView.vue'),
+            },
+            {
+                path: 'activate',
+                name: 'AccountActivation',
+                component: () => import('@/views/auth/ActivateView.vue'),
+                meta: { requiresActivationToken: true },
+            },
+        ]
     },
-    {
-        path: '/login/forgot',
-        name: 'ForgotPassword',
-        component: () => import('../views/login/ForgotView.vue'),
-    },
-    {
-        path: '/login/activate',
-        name: 'Activation',
-        component: () => import('../views/login/ActivateView.vue'),
-        meta: { requiresGuest: true }
-    },
+
 ]
 
 const router = createRouter({
     history: createWebHistory(), // Используем HTML5 history API
     routes: routes
+})
+
+router.beforeEach((to, from, next) => {
+    if (to.meta.requiresActivationToken) {
+        const hasToken = sessionStorage.getItem('activation_token')
+        if (!hasToken) {
+            next({ name: 'Login' })
+            return
+        }
+    }
+    next()
 })
 
 export default router

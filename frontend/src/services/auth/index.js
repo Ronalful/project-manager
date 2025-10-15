@@ -1,17 +1,22 @@
-import apiClient from '@/api'
-import router from '@/router/';
+import apiClient from '@/api/index.js'
+import router from '@/router';
 
 export const authService = {
     async login({email, password}) {
         try {
             const response = await apiClient.post('/auth-api/login', {email, password})
+            localStorage.access_token = response.data.accessToken
             router.push('/')
             return {success: true, data: response.data}
         } catch (error) {
             console.log('Login error:', error.response?.status, error.response?.data)
-            // Проверяем, что это ошибка активации
+            // Проверяем, что это неактивированный аккаунт
             if (error.response?.status === 400) {
-                localStorage.setItem('pending_activation_email', email)
+                const access_token = await this.initiateActivation({ email, password })
+
+                sessionStorage.setItem('activation_token', access_token) // Токен удалится при закрытии вкладки
+                sessionStorage.setItem('pending_activation_email', email)
+
                 router.push('/login/activate')
                 return {success: false, requiresActivation: true}
 
@@ -34,8 +39,14 @@ export const authService = {
         return apiClient.post('/auth-api/confirm-reset-password', {password})
     },
 
-    initiateActivation({email, password}) {
-        return apiClient.post('/auth-api/initiate-activation', {email, password})
+    async initiateActivation({email, password}) {
+        try {
+            const response = await apiClient.post('/auth-api/initiate-activation', { email, password })
+            return response.data.accessToken
+        } catch (error) {
+            console.error('Activation initiation failed:', error)
+            throw error
+        }
     },
 
     confirmActivation({secret, password}) {

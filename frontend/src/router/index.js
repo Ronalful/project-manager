@@ -19,8 +19,9 @@ const routes = [
     },
     {
         path: '/login/activate',
-        name: 'ForgotPassword',
+        name: 'Activation',
         component: () => import('../views/login/ActivateView.vue'),
+        meta: { requiresGuest: true }
     },
 ]
 

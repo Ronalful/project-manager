@@ -13,6 +13,7 @@ import '../../assets/styles/main.css'
       </div>
       <form @submit.prevent="handleLogin">
         <p v-if="errors.incorrect" class="error title">{{ errors.incorrect }}</p>
+        <p v-if="errors.others" class="error title">{{ errors.others }}</p>
         <div class="login-form-group-container">
           <div class="login-form-group">
             <input
@@ -70,15 +71,28 @@ export default {
   },
   methods: {
     async handleLogin() {
-      this.errors = {};
+      this.errors = {}
 
-      if (this.validateEmail() && this.validatePassword()) {
+      if (!this.validateEmail() || !this.validatePassword()) {
+        return;
+      }
+
+      try {
         const response = await authService.login({
           email: this.formData.email,
           password: this.formData.password
         })
-
         localStorage.access_token = response.data.accessToken
+      } catch (error){
+        if (!error.requiresActivation) {
+          if(!error.incorrectLoginPassword){
+            this.errors.incorrect = 'Неверный логин или пароль';
+          }
+          else{
+            console.error('Login error:', error)
+            this.errors.others = error.response?.data?.message || 'Ошибка входа'
+          }
+        }
       }
     },
 

@@ -1,8 +1,10 @@
 <script setup>
 import '../../assets/styles/main.css'
+import ThemeSwitch from "@/components/ThemeSwitch.vue";
 </script>
 
 <template>
+  <ThemeSwitch></ThemeSwitch>
   <div class="login-main-container">
     <div class="login-container">
       <div class="login-titles">
@@ -111,9 +113,7 @@ export default {
         return true;
       }
     },
-
-
-  }
+  },
 }
 </script>
 

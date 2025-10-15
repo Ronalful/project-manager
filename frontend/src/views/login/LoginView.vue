@@ -57,6 +57,7 @@ import '../../assets/styles/main.css'
 </template>
 
 <script>
+import {authService} from '@/services/authService.js'
 export default {
   data() {
     return {
@@ -68,19 +69,17 @@ export default {
     };
   },
   methods: {
-    handleLogin() {
+    async handleLogin() {
       this.errors = {};
 
-      if (this.validateEmail() && this.validatePassword())
-        this.$axios.post('http://localhost:8222/api/v1/auth/login', {
+      if (this.validateEmail() && this.validatePassword()) {
+        const response = await authService.login({
           email: this.formData.email,
           password: this.formData.password
         })
-            .then(response => {
-              localStorage.access_token = response.data.accessToken
-            })
 
-      console.log(localStorage.access_token);
+        localStorage.access_token = response.data.accessToken
+      }
     },
 
     validateEmail() {

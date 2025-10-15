@@ -64,22 +64,23 @@ export default {
         email: '',
         password: '',
       },
-      errors: {}
+      errors: {},
     };
   },
   methods: {
     handleLogin() {
       this.errors = {};
 
-      if (this.validateEmail() && this.validatePassword()) {
-        if (this.formData.email === 'admin@admin.ru' && this.formData.password === '1234') {
-          alert('Успешный вход');
-          // Можно добавить здесь переход на другую страницу или вызов API
-        } else {
-          console.log('error');
-          this.errors.incorrect = 'Неверный логин или пароль';
-        }
-      }
+      if (this.validateEmail() && this.validatePassword())
+        this.$axios.post('http://localhost:8222/api/v1/auth/login', {
+          email: this.formData.email,
+          password: this.formData.password
+        })
+            .then(response => {
+              localStorage.access_token = response.data.accessToken
+            })
+
+      console.log(localStorage.access_token);
     },
 
     validateEmail() {
@@ -111,7 +112,6 @@ export default {
         return true;
       }
     },
-
 
   }
 }

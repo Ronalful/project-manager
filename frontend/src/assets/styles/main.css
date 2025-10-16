@@ -1,4 +1,6 @@
 @import "login.css";
+@import "light-theme.css";
+@import "dark-theme.css";
 
 #app {
   max-width: 1280px;

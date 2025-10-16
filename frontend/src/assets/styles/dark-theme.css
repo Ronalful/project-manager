@@ -1,0 +1,16 @@
+html[data-theme='dark'] {
+    --main-color: rgb(17,193,144);
+    --gray: rgb(108, 119, 124);
+    --additional-color: rgb(27,229,172);
+    --error-background: rgb(255, 189, 189);
+    --error-text: rgb(255, 61, 61);
+    --background: #000620;
+    --background2: #151825;
+    --shadow: #ddd;
+    --field: #878787;
+    --gray2: #ccc;
+    --font-main: #fff;
+    --font-additional: rgb(228, 228, 228);
+    --theme-icon-sun: url(../img/icon-sun-dark.png);
+    --theme-icon-moon: url(../img/icon-moon-dark.png);
+}

@@ -9,9 +9,9 @@
     width: 100%;
     max-width: 448px;
     padding: 20px;
-    background-color: #ffffff;
+    background-color: var(--background2);
     border-radius: 15px;
-    box-shadow: 2px 2px 5px #ddd;
+    box-shadow: 2px 2px 5px var(--shadow);
 }
 
 @media (min-width: 800px) {
@@ -36,9 +36,14 @@
     border: 0;
     border-radius: 10px;
     box-sizing: border-box;
-    background-color: #f5f5f5;
+    background-color: var(--field);
+    color: var(--font-main);
     margin-top: 15px;
     margin-bottom: 5px;
+}
+
+.field::placeholder{
+    color: var(--font-additional);
 }
 
 .submit-button {
@@ -54,26 +59,25 @@
 }
 
 .submit-button:hover {
-    background-color: var(--additional); /* Цвет кнопки при наведении */
+    background-color: var(--additional-color); /* Цвет кнопки при наведении */
 }
 
-.forgot-button {
+a.forgot-button {
     display: block;
     text-align: center;
     margin-top: 10px;
     color: var(--gray);
-    text-decoration: none;
 }
 
-.forgot-button:hover {
-    text-shadow: var(--main-color) 1px 0 10px;
+a.forgot-button:hover {
     color: var(--gray);
     text-decoration: none;
+    text-shadow: var(--main-color) 1px 0 10px;
 }
 
 .error {
     text-align: left;
-    color: red;
+    color: var(--error-text);
     font-size: 12px;
 }
 

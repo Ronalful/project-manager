@@ -9,7 +9,7 @@
     width: 100%;
     max-width: 448px;
     padding: 20px;
-    background-color: var(--background);
+    background-color: var(--background2);
     border-radius: 15px;
     box-shadow: 2px 2px 5px var(--shadow);
 }
@@ -37,8 +37,13 @@
     border-radius: 10px;
     box-sizing: border-box;
     background-color: var(--field);
+    color: var(--font-main);
     margin-top: 15px;
     margin-bottom: 5px;
+}
+
+.field::placeholder{
+    color: var(--font-additional);
 }
 
 .submit-button {

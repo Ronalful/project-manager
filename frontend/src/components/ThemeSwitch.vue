@@ -4,7 +4,7 @@
 
 <template>
   <div class="theme-switch">
-    <div>☀️</div>
+    <div class="theme-switch__icon sun"></div>
     <label class="theme-switch__label">
       <input
           class="theme-switch__checkbox"
@@ -16,7 +16,7 @@
       />
       <span class="theme-switch__slider"></span>
     </label>
-    <div>🌙</div>
+    <div class="theme-switch__icon moon"></div>
   </div>
 
 
@@ -40,6 +40,19 @@ export default {
 </script>
 
 <style scoped>
+.theme-switch__icon{
+  width: 30px;
+  height: 30px;
+}
+
+.theme-switch__icon.sun{
+  background: var(--theme-icon-sun);
+}
+
+.theme-switch__icon.moon{
+  background: var(--theme-icon-moon);
+}
+
 .theme-switch{
   display: flex;
   flex-direction: row;

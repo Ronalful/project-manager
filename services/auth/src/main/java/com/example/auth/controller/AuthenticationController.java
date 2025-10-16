@@ -1,6 +1,6 @@
 package com.example.auth.controller;
 
-import com.example.auth.dto.*;
+import com.example.auth.dto.auth.*;
 import com.example.auth.entity.user.User;
 import com.example.auth.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;

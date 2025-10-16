@@ -1,23 +1,21 @@
-package com.example.auth.dto;
+package com.example.auth.dto.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-@Schema(description = "Запрос на аутентификацию пользователя")
-public record AuthenticationRequest(
+@Schema(description = "Запрос на активацию пользователя")
+public record ActivationRequest(
         @Schema(
-                description = "Email пользователя",
-                example = "user@example.com",
+                description = "Секретная фраза пользователя",
+                example = "Тортик",
                 requiredMode = Schema.RequiredMode.REQUIRED
         )
         @NotBlank
-        @Email
-        String email,
+        String secretPhrase,
 
         @Schema(
                 description = "Пароль пользователя",
-                example = "password123",
+                example = "securePassword123",
                 requiredMode = Schema.RequiredMode.REQUIRED
         )
         @NotBlank

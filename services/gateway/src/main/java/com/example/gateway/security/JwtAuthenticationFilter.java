@@ -92,6 +92,8 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                                     String role = user.role().getAuthority().replace("ROLE_", "");
 
                                     boolean authorized = routeValidator.isEndpointAllowedForRole(path, role);
+                                    System.out.println(authorized);
+                                    System.out.println(path + " " + role);
                                     if (!authorized) {
                                         return onError(exchange, HttpStatus.FORBIDDEN);
                                     }

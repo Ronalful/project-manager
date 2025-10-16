@@ -60,10 +60,10 @@ spring:
           filters:
             - JwtAuthenticationFilter
 
-        - id: user-service
+        - id: admin-user-service
           uri: http://auth-service:8080
           predicates:
-            - Path=/api/v1/user/**
+            - Path=/api/v1/admin/users/**
           filters:
             - JwtAuthenticationFilter
 

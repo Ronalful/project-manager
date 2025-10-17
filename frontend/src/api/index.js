@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {tokenService} from "@/services/TokenService.js";
 
 const apiClient = axios.create({
     timeout: 10000,
@@ -7,10 +8,17 @@ const apiClient = axios.create({
     }
 })
 
+const NON_AUTH_ENDPOINTS = [
+    '/auth-api/initiate-reset-password',
+    '/auth-api/confirm-reset-password',
+    '/auth-api/confirm-activation',
+    '/auth-api/initiate-activation',
+]
+
 // Интерцептор для автоматической подстановки токена
 apiClient.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('access_token')
+        const token = tokenService.getAccessToken()
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
         }

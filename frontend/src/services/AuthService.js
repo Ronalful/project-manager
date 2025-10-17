@@ -6,7 +6,8 @@ export const authService = {
     async login({email, password}) {
         try {
             const response = await apiClient.post('/auth-api/login', {email, password})
-            localStorage.access_token = response.data.accessToken
+            tokenService.setTokens(response.accessToken, response.refreshToken)
+            alert('login0');
             router.push('/')
             return {success: true, data: response.data}
         } catch (error) {
@@ -15,7 +16,7 @@ export const authService = {
             if (error.response?.status === 400) {
                 const data = await this.initiateActivation({ email, password })
 
-                tokenService.setTokens(data.accessToken, data.refreshToken)
+                tokenService.setTempTokens(data.accessToken, data.refreshToken)
 
                 router.push('/login/activate')
                 return {success: false, requiresActivation: true}
@@ -38,8 +39,27 @@ export const authService = {
         }
     },
 
-    initiateResetPassword({email, secret}) {
-        return apiClient.post('/auth-api/initiate-reset-password', {email, secret})
+    async initiateResetPassword({email, secretPhrase}) {
+        try {
+            const response = apiClient.post('/auth-api/initiate-reset-password', {email, secretPhrase})
+            tokenService.setTempTokens(response.accessToken, response.refreshToken)
+            return {success: true, data: response.data}
+        } catch (error) {
+            console.log('Login error:', error.response?.status, error.response?.data)
+
+            // Неверное секретное слово
+            if (error.response?.status === 400) {
+
+                router.push('/login/activate')
+                return {success: false, requiresActivation: true}
+
+            }
+            // Нет такого пользователя
+            else if (error.response?.status === 403) {
+                return {success: false, userDoesNotExist: true}
+            }
+            return {success: false, error: error}
+        }
     },
 
     confirmResetPassword({password}) {
@@ -76,12 +96,12 @@ export const authService = {
         }
     },
 
-    async isTokenValid(){
+    async isTokenValid(token){
         try {
-            const response = await apiClient.get('/auth-api/is-token-valid')
+            const response = await apiClient.get('/auth-api/is-token-valid/' + token)
             return response.status === 200
         } catch (error) {
-            console.warn('Token validation failed:', error)
+            console.log('Token validation failed:', error)
             return false
         }
     }

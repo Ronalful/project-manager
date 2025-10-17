@@ -2,9 +2,16 @@ import apiClient from '@/api'
 import {authService} from "@/services/AuthService.js";
 
 class TokenService{
+    setTempTokens(accessToken, refreshToken) {
+        sessionStorage.setItem('temp_access_token', accessToken)
+        sessionStorage.setItem('temp_refresh_token', refreshToken)
+    }
+
     setTokens(accessToken, refreshToken) {
        this.setAccessToken(accessToken)
        this.setRefreshToken(refreshToken)
+
+       this.clearTempTokens()
     }
 
     setAccessToken(accessToken) {
@@ -16,27 +23,43 @@ class TokenService{
     }
 
     getAccessToken() {
+        const tempToken = sessionStorage.getItem('temp_access_token')
+        if (tempToken) return tempToken
+
         return localStorage.getItem('access_token')
     }
 
     getRefreshToken() {
+        const tempToken = sessionStorage.getItem('temp_refresh_token')
+        if (tempToken) return tempToken
+
         return localStorage.getItem('refresh_token')
     }
 
     clearTokens() {
+        this.clearTempTokens()
+
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
     }
 
-    isAuthenticated() {
-        return !!this.getAccessToken()
+    clearTempTokens() {
+        sessionStorage.removeItem('temp_access_token')
+        sessionStorage.removeItem('temp_refresh_token')
     }
 
-    async checkTokenValidity() {
+    isAuthenticated() {
         const token = this.getAccessToken()
-        if (!token) return false
 
-        return await authService.isTokenValid();
+        if (!token) {
+            return false
+        }
+
+        return true
+    }
+
+    isUsingTempTokens() {
+        return !!sessionStorage.getItem('temp_access_token')
     }
 
     async refreshAccessToken(){
@@ -53,7 +76,7 @@ class TokenService{
     }
 
     async updateTokenIfIsInvalid(){
-        if(! await this.checkTokenValidity()){
+        if(! await this.isAuthenticated()){
             await this.refreshAccessToken()
         }
         return true

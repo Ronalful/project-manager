@@ -7,12 +7,12 @@ const routes = [
         path: '/',
         name: 'Home',
         component: HomeView,
-        meta: { requiresAuth: true }
+        meta: {requiresAuth: true}
     },
     {
         path: '/login',
         component: () => import('@/views/auth/AuthLayout.vue'),
-        meta: { requiresGuest: true },
+        meta: {requiresGuest: true},
         children: [
             {
                 path: '',
@@ -25,10 +25,16 @@ const routes = [
                 component: () => import('@/views/auth/ForgotView.vue'),
             },
             {
+                path: 'recovery',
+                name: 'RecoveryPassword',
+                component: () => import('@/views/auth/RecoveryView.vue'),
+                meta: {requiresActivationToken: true},
+            },
+            {
                 path: 'activate',
                 name: 'AccountActivation',
                 component: () => import('@/views/auth/ActivateView.vue'),
-                meta: { requiresActivationToken: true },
+                meta: {requiresActivationToken: true},
             },
         ]
     },
@@ -42,26 +48,26 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const isAuthenticated = tokenService.isAuthenticated()
+    const isTempAuth = tokenService.isUsingTempTokens()
 
     if (to.meta.requiresAuth && !isAuthenticated) {
         next({
             name: 'Login',
-            query: { redirect: to.fullPath }
+            query: {redirect: to.fullPath}
         })
         return
     }
 
     if (to.meta.requiresGuest && isAuthenticated) {
-        next({ name: 'Home' })
+        next({name: 'Home'})
         return
     }
 
-    if (to.meta.requiresActivationToken) {
-        if (!tokenService.getAccessToken()) {
-            next({ name: 'Login' })
-            return
-        }
+    if(to.meta.requiresActivationToken && !isTempAuth){
+        next({name: 'Login'})
+        return
     }
+
     next()
 })
 

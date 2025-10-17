@@ -1,9 +1,11 @@
 <script setup>
 import '../../assets/styles/main.css'
+import SubmitButton from "@/components/ui/SubmitButton.vue";
+import NotificationWithBack from "@/components/NotificationWithBack.vue";
 </script>
 
 <template>
-  <div v-if="!isChangePassword && !isSuccess" class="login-main-container recovery">
+  <div class="login-main-container recovery">
     <div class="login-container">
       <h2 class="login-second-title">Восстановление пароля</h2>
       <form @submit.prevent="handleRecovery">
@@ -31,12 +33,7 @@ import '../../assets/styles/main.css'
           </div>
           <p v-if="errors.secret" class="error">{{ errors.secret }}</p>
 
-          <button
-              class="submit-button"
-              type="submit"
-          >
-            Восстановить
-          </button>
+          <SubmitButton>Восстановить</SubmitButton>
 
         </div>
 
@@ -44,57 +41,11 @@ import '../../assets/styles/main.css'
     </div>
   </div>
 
-  <div v-if="isChangePassword" class="login-main-container answer">
-    <form @submit.prevent="handleChangePassword">
-      <div class="login-container answer">
-        <div class="login-form-group">
-          <input
-              class="field"
-              id="password"
-              v-model="recoveryFormData.password"
-              type="password"
-              placeholder="Пароль"
-          />
-          <p v-if="errors.password" class="error">{{ errors.password }}</p>
-        </div>
-        <div class="login-form-group">
-          <input
-              class="field"
-              id="confirmPassword"
-              v-model="recoveryFormData.confirmPassword"
-              type="password"
-              placeholder="Подтвердите пароль"
-          />
-          <p v-if="errors.confirmPassword" class="error">{{ errors.confirmPassword }}</p>
-        </div>
-          <button
-              class="submit-button"
-              type="submit"
-          >
-            Сменить пароль
-          </button>
-      </div>
-    </form>
-  </div>
-
-  <div v-if="isSuccess" class="login-main-container answer">
-    <div class="login-container answer">
-      <div class="answer-message">
-        <p> Пароль восстановлен! </p>
-      </div>
-      <div class="goback-button">
-        <a
-            class="submit-button"
-            type="button"
-            href="/login"
-
-        >Вернуться</a>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
+import {authService} from "@/services/AuthService.js";
+
 export default {
   data() {
     return {
@@ -102,39 +53,21 @@ export default {
         email: '',
         secret: '',
       },
-      recoveryFormData: {
-        password: '',
-        confirmPassword: '',
-      },
       errors: {},
-      isSuccess: false,
-      isChangePassword: false,
     };
   },
   methods: {
-    handleRecovery() {
+    async handleRecovery() {
       this.errors = {};
 
-      if (this.validateEmail() && this.validateSecret()) {
-        if (this.formData.email === 'admin@admin.ru' && this.formData.secret === 'cat') {
-
-          // запрос на бэк
-
-          this.isChangePassword = true;
-        }
+      if (!this.validateEmail() || !this.validateSecret()) {
+        return false
       }
-    },
 
-    handleChangePassword() {
-      this.errors = {};
-
-      if (this.validatePassword() && this.checkPasswordCompliance()) {
-
-        // запрос на бэк
-
-        this.isChangePassword = false;
-        this.isSuccess = true;
-      }
+      const response = await authService.initiateResetPassword({
+        email: this.formData.email,
+        secretPhrase: this.formData.secret
+      })
     },
 
     validateEmail() {
@@ -166,33 +99,6 @@ export default {
         return true;
       }
     },
-
-    validatePassword() {
-      const passwordField = document.getElementById('password');
-
-      if (!this.recoveryFormData.password) {
-        this.errors.password = 'Введите пароль';
-        passwordField.classList.add('field-error');
-        return false;
-      } else {
-        passwordField.classList.remove('field-error');
-        return true;
-      }
-    },
-
-    checkPasswordCompliance() {
-      const confirmPasswordField = document.getElementById('confirmPassword');
-
-      if (this.recoveryFormData.password !== this.recoveryFormData.confirmPassword) {
-        console.log('не');
-        this.errors.confirmPassword = 'Пароли не совпадают';
-        confirmPasswordField.classList.add('field-error');
-        return false;
-      } else {
-        confirmPasswordField.classList.remove('field-error');
-        return true;
-      }
-    }
   }
 }
 </script>

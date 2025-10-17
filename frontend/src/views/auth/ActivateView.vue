@@ -1,5 +1,6 @@
 <script setup>
 import '../../assets/styles/main.css'
+import SubmitButton from "@/components/ui/SubmitButton.vue";
 </script>
 
 <template>
@@ -33,12 +34,9 @@ import '../../assets/styles/main.css'
           />
           <p v-if="errors.secret" class="error">{{ errors.secret }}</p>
         </div>
-        <button
-            class="submit-button"
-            type="submit"
-        >
-          Подтвердить
-        </button>
+
+        <SubmitButton></SubmitButton>
+
       </div>
     </form>
   </div>

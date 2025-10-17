@@ -1,5 +1,7 @@
 <script setup>
 import '../../assets/styles/main.css'
+import SubmitButton from "@/components/ui/SubmitButton.vue";
+import GotoLink from "@/components/ui/GotoLink.vue";
 </script>
 
 <template>
@@ -36,20 +38,10 @@ import '../../assets/styles/main.css'
             <p v-if="errors.password" class="error">{{ errors.password }}</p>
           </div>
 
-          <button
-              class="submit-button"
-              type="submit"
-          >
-            Войти
-          </button>
+        <SubmitButton>Войти</SubmitButton>
 
-          <a
-              class="forgot-button"
-              href="login/forgot"
-              type="button"
-          >
-            Не помню пароль
-          </a>
+        <GotoLink href="login/forgot">Не помню пароль</GotoLink>
+
         </div>
 
       </form>

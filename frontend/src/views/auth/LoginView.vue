@@ -58,7 +58,7 @@ import '../../assets/styles/main.css'
 </template>
 
 <script>
-import {authService} from '@/services/auth'
+import {authService} from '@/services/AuthService.js'
 
 export default {
   data() {

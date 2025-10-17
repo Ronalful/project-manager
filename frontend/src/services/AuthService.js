@@ -1,5 +1,6 @@
 import apiClient from '@/api/index.js'
-import router from '@/router';
+import router from '@/router/index.js';
+import { tokenService } from '@/services/TokenService.js'
 
 export const authService = {
     async login({email, password}) {
@@ -14,9 +15,7 @@ export const authService = {
             if (error.response?.status === 400) {
                 const data = await this.initiateActivation({ email, password })
 
-                sessionStorage.setItem('activation_token', data.accessToken) // Токен удалится при закрытии вкладки
-                localStorage.setItem('refresh_token', data.refreshToken) // Долгосрочный
-                sessionStorage.setItem('pending_activation_email', email)
+                tokenService.setTokens(data.accessToken, data.refreshToken)
 
                 router.push('/login/activate')
                 return {success: false, requiresActivation: true}
@@ -28,8 +27,14 @@ export const authService = {
         }
     },
 
-    logout() {
-        return apiClient.post('/auth-api/logout')
+    async logout() {
+        try {
+            await apiClient.post('/auth-api/logout')
+        } catch (error) {
+            console.warn('Logout request failed:', error)
+        } finally {
+            tokenService.clearTokens()
+        }
     },
 
     initiateResetPassword({email, secret}) {
@@ -50,9 +55,9 @@ export const authService = {
         }
     },
 
-    async confirmActivation({secret, password}) {
+    async confirmActivation({secretPhrase, password}) {
         try {
-            const response = await apiClient.post('/auth-api/confirm-activation', {secret, password})
+            const response = await apiClient.post('/auth-api/confirm-activation', {secretPhrase, password})
             router.push('/')
             return {success: true, data: response.data}
         } catch (error) {
@@ -60,5 +65,24 @@ export const authService = {
             throw error
         }
     },
+
+    async refreshToken(){
+        try {
+            return await apiClient.post('/auth-api/refresh-token')
+        } catch (error) {
+            console.error('Error refresh token: ', error)
+            throw error
+        }
+    },
+
+    async isTokenValid(){
+        try {
+            const response = await apiClient.get('/auth-api/is-token-valid')
+            return response.status === 200
+        } catch (error) {
+            console.warn('Token validation failed:', error)
+            return false
+        }
+    }
 
 }

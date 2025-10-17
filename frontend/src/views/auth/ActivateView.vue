@@ -11,7 +11,7 @@ import '../../assets/styles/main.css'
           <a href="#password">новый пароль</a>
           и
           <a href="#secret">секретное слово</a>
-          для восстановления аккаунта</h3>
+          для активации аккаунта</h3>
         <p v-if="errors.others" class="error title">{{ errors.others }}</p>
         <div class="login-form-group">
           <input
@@ -45,7 +45,7 @@ import '../../assets/styles/main.css'
 </template>
 
 <script>
-import {authService} from "@/services/auth/index.js";
+import {authService} from "@/services/AuthService.js";
 
 export default {
   data() {
@@ -67,11 +67,11 @@ export default {
 
       try {
         const response = await authService.confirmActivation({
-          secret: this.activationData.secret,
+          secretPhrase: this.activationData.secret,
           password: this.activationData.password
         })
       } catch (error){
-        this.errors.others = error.response?.data?.message || 'Ошибка активации аккаунта' //
+        this.errors.others = error.response?.data?.message || 'Ошибка активации аккаунта. Обратитесь к администратору.'
       }
     },
 
@@ -101,6 +101,5 @@ export default {
       }
     },
   }
-
 }
 </script>

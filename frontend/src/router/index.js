@@ -1,15 +1,18 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import HomeView from "@/views/HomeView.vue";
+import {tokenService} from "@/services/TokenService.js";
 
 const routes = [
     {
         path: '/',
         name: 'Home',
-        component: HomeView // тут будет основной шаблон
+        component: HomeView,
+        meta: { requiresAuth: true }
     },
     {
         path: '/login',
         component: () => import('@/views/auth/AuthLayout.vue'),
+        meta: { requiresGuest: true },
         children: [
             {
                 path: '',
@@ -33,14 +36,28 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory(), // Используем HTML5 history API
+    history: createWebHistory(),
     routes: routes
 })
 
 router.beforeEach((to, from, next) => {
+    const isAuthenticated = tokenService.isAuthenticated()
+
+    if (to.meta.requiresAuth && !isAuthenticated) {
+        next({
+            name: 'Login',
+            query: { redirect: to.fullPath }
+        })
+        return
+    }
+
+    if (to.meta.requiresGuest && isAuthenticated) {
+        next({ name: 'Home' })
+        return
+    }
+
     if (to.meta.requiresActivationToken) {
-        const hasToken = sessionStorage.getItem('activation_token')
-        if (!hasToken) {
+        if (!tokenService.getAccessToken()) {
             next({ name: 'Login' })
             return
         }

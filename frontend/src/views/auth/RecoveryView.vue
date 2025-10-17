@@ -7,6 +7,8 @@ import SubmitButton from "@/components/ui/SubmitButton.vue";
   <div class="login-main-container">
     <form @submit.prevent="handleChangePassword">
       <div class="login-container">
+        <h2 class="login-second-title">Задайте новый пароль</h2>
+        <p v-if="errors.incorrect" class="error title">{{ errors.incorrect }}</p>
         <div class="login-form-group">
           <input
               class="field"
@@ -38,6 +40,8 @@ import SubmitButton from "@/components/ui/SubmitButton.vue";
 </template>
 
 <script>
+import {authService} from "@/services/AuthService.js";
+
 export default {
   data() {
     return {
@@ -49,13 +53,16 @@ export default {
     }
   },
   methods: {
-    handleChangePassword() {
+    async handleChangePassword() {
       this.errors = {};
 
       if (this.validatePassword() && this.checkPasswordCompliance()) {
-
-        // запрос на бэк
-
+        const response = await authService.confirmResetPassword({
+          password: this.recoveryFormData.password,
+        })
+        if(response.error){
+          this.errors.incorrect = 'Непредвиденная ошибка';
+        }
       }
     },
 
@@ -76,7 +83,6 @@ export default {
       const confirmPasswordField = document.getElementById('confirmPassword');
 
       if (this.recoveryFormData.password !== this.recoveryFormData.confirmPassword) {
-        console.log('не');
         this.errors.confirmPassword = 'Пароли не совпадают';
         confirmPasswordField.classList.add('field-error');
         return false;

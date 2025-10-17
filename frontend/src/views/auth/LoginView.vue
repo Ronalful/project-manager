@@ -77,6 +77,8 @@ export default {
       if (!response.requiresActivation) {
         if (response.incorrectLoginPassword) {
           this.errors.incorrect = 'Неверный логин или пароль';
+        } else if(response.passwordExpired){
+          this.errors.incorrect = 'Этот пароль недействителен. Пожалуйста, установите новый через операцию сброса пароля.';
         } else {
           this.errors.others = response?.data?.message || 'Ошибка входа'
         }

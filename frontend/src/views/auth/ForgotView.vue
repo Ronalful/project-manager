@@ -9,7 +9,6 @@ import NotificationWithBack from "@/components/NotificationWithBack.vue";
     <div class="login-container">
       <h2 class="login-second-title">Восстановление пароля</h2>
       <form @submit.prevent="handleRecovery">
-        <div class="access-token" hidden></div>
         <p v-if="errors.incorrect" class="error title">{{ errors.incorrect }}</p>
         <div class="login-form-group-container">
           <div class="login-form-group">
@@ -68,6 +67,14 @@ export default {
         email: this.formData.email,
         secretPhrase: this.formData.secret
       })
+
+      if (response.incorrectSecretPhrase) {
+        this.errors.incorrect = 'Неверное секретное слово';
+      } else if (response.userDoesNotExist) {
+        this.errors.incorrect = 'Пользователь с таким email не найден.';
+      } else {
+        this.errors.others = response?.data?.message || 'Ошибка восстановления.'
+      }
     },
 
     validateEmail() {

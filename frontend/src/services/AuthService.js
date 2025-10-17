@@ -30,6 +30,7 @@ export const authService = {
     async logout() {
         try {
             await apiClient.post('/auth-api/logout')
+            router.push('/login')
         } catch (error) {
             console.warn('Logout request failed:', error)
         } finally {

@@ -1,9 +1,12 @@
 <script setup>
+import LogoutIcon from "@/components/icons/LogoutIcon.vue";
+import LogoutButton from "@/components/LogoutButton.vue";
 </script>
 
 <template>
   <header>
     <img alt="Vue logo" class="logo" src="../assets/logo.svg" width="125" height="125" />
+    <LogoutButton></LogoutButton>
 
     <div class="wrapper">
 

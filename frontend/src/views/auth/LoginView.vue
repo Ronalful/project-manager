@@ -59,6 +59,7 @@ import '../../assets/styles/main.css'
 
 <script>
 import {authService} from '@/services/auth'
+
 export default {
   data() {
     return {
@@ -77,20 +78,15 @@ export default {
         return;
       }
 
-      try {
-        const response = await authService.login({
-          email: this.formData.email,
-          password: this.formData.password
-        })
-      } catch (error){
-        if (!error.requiresActivation) {
-          if(!error.incorrectLoginPassword){
-            this.errors.incorrect = 'Неверный логин или пароль';
-          }
-          else{
-            console.error('Login error:', error)
-            this.errors.others = error.response?.data?.message || 'Ошибка входа'
-          }
+      const response = await authService.login({
+        email: this.formData.email,
+        password: this.formData.password
+      })
+      if (!response.requiresActivation) {
+        if (response.incorrectLoginPassword) {
+          this.errors.incorrect = 'Неверный логин или пароль';
+        } else {
+          this.errors.others = response?.data?.message || 'Ошибка входа'
         }
       }
     },

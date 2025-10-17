@@ -3,7 +3,8 @@ export default {
 
     data() {
         return {
-            theme: localStorage.getItem('theme') || 'light'
+            theme: localStorage.getItem('theme') || 'light',
+            isDark: localStorage.getItem('theme') === 'dark',
         }
     },
     mounted() {

@@ -11,6 +11,5 @@ html {
     --gray2: #ccc;
     --font-main: #000000;
     --font-additional: rgb(133, 133, 133);
-    --theme-icon-sun: url(../img/icon-sun-light.png);
-    --theme-icon-moon: url(../img/icon-moon-light.png);
+    --svg-icon-color: #000
 }

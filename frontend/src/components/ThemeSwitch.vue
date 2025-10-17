@@ -1,10 +1,12 @@
 <script setup>
-
+import LightThemeIcon from "@/components/icons/LightThemeIcon.vue";
+import DarkThemeIcon from "@/components/icons/DarkThemeIcon.vue";
 </script>
 
 <template>
   <div class="theme-switch">
-    <div class="theme-switch__icon sun"></div>
+    <div v-if="isDark"><LightThemeIcon><template #isDark></template></LightThemeIcon></div>
+    <div v-if="!isDark"><LightThemeIcon><template></template></LightThemeIcon></div>
     <label class="theme-switch__label">
       <input
           class="theme-switch__checkbox"
@@ -16,7 +18,8 @@
       />
       <span class="theme-switch__slider"></span>
     </label>
-    <div class="theme-switch__icon moon"></div>
+    <div v-if="isDark"><DarkThemeIcon><template #isDark></template></DarkThemeIcon></div>
+    <div v-if="!isDark"><DarkThemeIcon><template></template></DarkThemeIcon></div>
   </div>
 
 
@@ -43,14 +46,6 @@ export default {
 .theme-switch__icon{
   width: 30px;
   height: 30px;
-}
-
-.theme-switch__icon.sun{
-  background: var(--theme-icon-sun);
-}
-
-.theme-switch__icon.moon{
-  background: var(--theme-icon-moon);
 }
 
 .theme-switch{

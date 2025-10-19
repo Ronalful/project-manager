@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -57,35 +56,35 @@ public class EmailService {
 
     public void sendProjectNotificationEmail(ProjectNotification body) throws MessagingException {
         Map<String, Object> variables = new HashMap<>();
-        variables.put("developer", body.developer());
+        variables.put("developer", body.user());
         variables.put("projectName", body.projectName());
         variables.put("operation", body.operation());
 
-        sendEmail(body.developer().email(),
+        sendEmail(body.user().email(),
                 variables,
                 EmailTemplates.PROJECT_NOTIFICATION);
     }
 
     public void sendTaskNotificationEmail(TaskNotification body) throws MessagingException {
         Map<String, Object> variables = new HashMap<>();
-        variables.put("developer", body.developer());
+        variables.put("developer", body.userResponse());
         variables.put("taskTitle", body.taskTitle());
         variables.put("project", body.project());
         variables.put("operation", body.operation());
 
-        sendEmail(body.developer().email(),
+        sendEmail(body.userResponse().email(),
                 variables,
                 EmailTemplates.TASK_NOTIFICATION);
     }
 
     public void sendTaskChangedStateNotificationEmail(TaskChangedStateNotification body) throws MessagingException {
         Map<String, Object> variables = new HashMap<>();
-        variables.put("developer", body.developer());
+        variables.put("developer", body.userResponse());
         variables.put("taskTitle", body.taskTitle());
         variables.put("taskStatus", body.taskStatus());
         variables.put("project", body.project());
 
-        sendEmail(body.developer().email(),
+        sendEmail(body.userResponse().email(),
                 variables,
                 EmailTemplates.TASK_CHANGED_STATE_NOTIFICATION);
     }

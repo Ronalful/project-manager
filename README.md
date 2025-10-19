@@ -36,9 +36,9 @@ Zipkin для распределенного трейсинга, а также �
 Запросы делать по порту – 8222
 
 ### Документация запросов микросервисов в Swagger
-- Project – http://localhost:8222/api/v1/projects/swagger-ui.html
+- Project – http://localhost:8222/api/v1/projects/doc/swagger-ui.html
 - Task – http://localhost:8222/api/v1/tasks/swagger-ui.html
-- Auth – http://localhost:8222/api/v1/auth/swagger-ui.html
+- Auth – http://localhost:8222/api/v1/auth/doc/swagger-ui.html
 
 # Установка для Windows
 

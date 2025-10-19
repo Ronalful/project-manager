@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProjectService {
+public class AdminProjectService {
 
     private final ProjectRepository projectRepository;
     private final ProjectAssignmentService projectAssignmentService;
@@ -48,7 +48,7 @@ public class ProjectService {
 
     private void unassignDevelopersInProject(Project project) {
         for (var assignment : project.getAssignments()) {
-            projectAssignmentService.unassignDeveloper(new ProjectAssignmentRequest(project.getId(), assignment.getDeveloperId()));
+            projectAssignmentService.unassignUser(new ProjectAssignmentRequest(project.getId(), assignment.getUserId()));
         }
     }
 

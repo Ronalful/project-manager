@@ -15,7 +15,7 @@ public record ProjectAssignmentRequest(
                 example = "1",
                 requiredMode = Schema.RequiredMode.REQUIRED
         )
-        @NotNull(message = "developerId is required")
-        Integer developerId
+        @NotNull(message = "userId is required")
+        Integer userId
 ) {
 }

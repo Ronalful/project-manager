@@ -7,6 +7,7 @@ import com.example.auth.entity.user.Role;
 import com.example.auth.entity.user.User;
 import com.example.auth.exception.AuthException;
 import com.example.auth.exception.UserNotFoundException;
+import com.example.auth.mapper.UserMapper;
 import com.example.auth.repository.TokenRepository;
 import com.example.auth.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -24,6 +25,7 @@ public class AdminUserService {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final EncryptionService encryptionService;
+    private final UserMapper mapper;
 
    @Transactional
     public void createUser(CreateUserRequest request) {
@@ -107,15 +109,7 @@ public class AdminUserService {
 
     public List<AdminUserResponse> findAll() {
         return userRepository.findAll().stream()
-                .map(user -> new AdminUserResponse(
-                        user.getId(),
-                        user.getFirstname(),
-                        user.getLastname(),
-                        user.getEmail(),
-                        user.getRole(),
-                        user.isActivated(),
-                        user.isPasswordExpired()
-                ))
+                .map(mapper::fromUser)
                 .toList();
     }
 
@@ -124,14 +118,12 @@ public class AdminUserService {
                 .orElseThrow(() -> new UserNotFoundException(
                         "Пользователь с id %d не найден".formatted(userId)
                 ));
-        return new AdminUserResponse(
-                user.getId(),
-                user.getFirstname(),
-                user.getLastname(),
-                user.getEmail(),
-                user.getRole(),
-                user.isActivated(),
-                user.isPasswordExpired()
-        );
+        return mapper.fromUser(user);
+    }
+
+    public AdminUserResponse getUserByEmail(String email) {
+        var user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        return mapper.fromUser(user);
     }
 }

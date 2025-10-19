@@ -1,6 +1,6 @@
-package com.example.project.developer;
+package com.example.notification.kafka.developer;
 
-public record DeveloperResponse(
+public record UserResponse(
         Integer id,
         String firstname,
         String lastname,

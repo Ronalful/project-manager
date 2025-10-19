@@ -179,11 +179,6 @@ public class AuthenticationService {
         revokeAllUserTokens(token.get().user);
     }
 
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-    }
-
     public Boolean isTokenValid(String token) {
         var userEmail = jwtService.extractUsername(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);

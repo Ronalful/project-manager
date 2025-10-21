@@ -22,10 +22,12 @@
         </processorPath>
         <module name="project" />
         <module name="notification" />
-        <module name="developer" />
         <module name="task" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="developer" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

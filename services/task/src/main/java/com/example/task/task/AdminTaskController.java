@@ -2,6 +2,7 @@ package com.example.task.task;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,19 +12,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/tasks")
+@RequestMapping("/api/v1/admin/tasks")
 @RequiredArgsConstructor
 @Tag(
-        name = "TaskController",
+        name = "Управление задачами админом",
         description = "Данный контроллер отвечает за действия над задачами"
 )
-public class TaskController {
+public class AdminTaskController {
 
-    private final TaskService service;
+    private final AdminTaskService service;
 
     @PostMapping
     @Operation(
-            description = "Позволяет создать задачу"
+            description = "Позволяет создать задачу",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     public ResponseEntity<TaskResponse> createTask(@RequestBody @Valid TaskRequest request) {
         return ResponseEntity.ok(service.create(request));
@@ -31,7 +33,8 @@ public class TaskController {
 
     @GetMapping
     @Operation(
-            description = "Позволяет получить все задачи"
+            description = "Позволяет получить все задачи",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     public ResponseEntity<List<TaskResponse>> getTasks() {
         return ResponseEntity.ok(service.findAll());
@@ -39,7 +42,8 @@ public class TaskController {
 
     @GetMapping("/{task-id}")
     @Operation(
-            description = "Позволяет получить задачу по id"
+            description = "Позволяет получить задачу по id",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     public ResponseEntity<TaskResponse> getTaskById(
             @PathVariable("task-id")
@@ -55,7 +59,8 @@ public class TaskController {
 
     @DeleteMapping("/{task-id}")
     @Operation(
-            description = "Позволяет удалить задачу по id"
+            description = "Позволяет удалить задачу по id",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     public ResponseEntity<Void> deleteTaskById(
             @PathVariable("task-id")
@@ -72,7 +77,8 @@ public class TaskController {
 
     @GetMapping("/in-project/{project-id}")
     @Operation(
-            description = "Позволяет получить все задачи из проекта"
+            description = "Позволяет получить все задачи из проекта",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     public ResponseEntity<List<TaskResponse>> getTasksByProjectId(
             @PathVariable("project-id")
@@ -87,7 +93,8 @@ public class TaskController {
 
     @PutMapping
     @Operation(
-            description = "Позволяет обновить информацию о задаче"
+            description = "Позволяет обновить информацию о задаче",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     public ResponseEntity<TaskResponse> updateTask(@RequestBody @Valid TaskUpdateRequest request) {
         return ResponseEntity.ok(service.update(request));

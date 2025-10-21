@@ -1,6 +1,6 @@
 package com.example.task.task;
 
-import com.example.task.developer.DeveloperResponse;
+import com.example.task.developer.UserResponse;
 import com.example.task.project.ProjectResponse;
 
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ public record TaskResponse(
         TaskPriority priority,
         TaskStatus status,
         Date dueDate,
-        List<DeveloperResponse> developers,
+        List<UserResponse> developers,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {

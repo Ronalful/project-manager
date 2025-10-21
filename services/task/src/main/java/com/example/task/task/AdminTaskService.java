@@ -1,12 +1,12 @@
 package com.example.task.task;
 
-import com.example.task.developer.DeveloperClient;
+import com.example.task.developer.UserClient;
 import com.example.task.exception.DeveloperNotFoundException;
 import com.example.task.exception.ProjectNotFoundException;
 import com.example.task.exception.TaskNotFoundException;
 import com.example.task.kafka.TaskChangedStateNotification;
 import com.example.task.kafka.TaskProducer;
-import com.example.task.project.ProjectClient;
+import com.example.task.project.AdminProjectClient;
 import com.example.task.taskAssignment.TaskAssignmentRequest;
 import com.example.task.taskAssignment.TaskAssignmentService;
 import jakarta.transaction.Transactional;
@@ -19,13 +19,15 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class TaskService {
+public class AdminTaskService {
 
     private final TaskRepository taskRepository;
     private final TaskMapper mapper;
-    private final ProjectClient projectClient;
+
+    private final AdminProjectClient adminProjectClient;
+    private final UserClient userClient;
     private final TaskProducer taskProducer;
-    private final DeveloperClient developerClient;
+
     private final TaskAssignmentService taskAssignmentService;
 
     @Transactional
@@ -38,7 +40,7 @@ public class TaskService {
     }
 
     private boolean isProjectExistsWithId(Integer projectId) {
-        return projectClient.getProjectById(projectId).isPresent();
+        return adminProjectClient.getProjectById(projectId).isPresent();
     }
 
     public List<TaskResponse> findAll() {
@@ -63,7 +65,7 @@ public class TaskService {
 
     private void unassignDevelopersInTask(Task task) {
         for (var assignment : task.getAssignments()) {
-            taskAssignmentService.unassignDeveloper(new TaskAssignmentRequest(task.getId(), assignment.getDeveloperId()));
+            taskAssignmentService.unassignDeveloper(new TaskAssignmentRequest(task.getId(), assignment.getUserId()));
         }
     }
 
@@ -89,11 +91,11 @@ public class TaskService {
     }
 
     private void sendDeveloperTaskChangedStatusInProjectNotification(Task task) {
-        var project = projectClient.getProjectById(task.getProjectId())
+        var project = adminProjectClient.getProjectById(task.getProjectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project not found with id " + task.getProjectId()));
         for (var assignment : task.getAssignments()) {
-            var developer = developerClient.getDeveloperById(assignment.getDeveloperId())
-                    .orElseThrow(() -> new DeveloperNotFoundException("Developer " + assignment.getDeveloperId() + " not found"));
+            var developer = userClient.getUserById(assignment.getUserId())
+                    .orElseThrow(() -> new DeveloperNotFoundException("Developer " + assignment.getUserId() + " not found"));
 
             taskProducer.send(new TaskChangedStateNotification(
                     developer,

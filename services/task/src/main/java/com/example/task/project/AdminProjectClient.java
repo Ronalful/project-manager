@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.Optional;
 
 @FeignClient(
-        name = "project-service",
-        url = "${application.config.project-url}"
+        name = "admin-project-service",
+        url = "${application.config.admin-project-url}"
 )
-public interface ProjectClient {
+public interface AdminProjectClient {
     @GetMapping("/{project-id}")
     Optional<ProjectResponse> getProjectById(@PathVariable("project-id") Integer projectId);
     @GetMapping("/{project-id}")

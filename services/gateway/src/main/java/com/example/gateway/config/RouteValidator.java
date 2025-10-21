@@ -36,20 +36,20 @@ public class RouteValidator {
         );
 
         return swaggerEndpoints.stream()
-                .map(endpoint -> "/api/v1/" + path + "/doc" + endpoint)
+                .map(endpoint -> "/api/v1/doc/" + path + endpoint)
                 .toList();
     }
 
     private static final Map<String, List<String>> roleBasedEndpoints = Map.of(
             "ADMIN", List.of(
-                    "/api/v1/admin/users/**",
-                    "/api/v1/admin/projects/**",
+                    "/api/v1/admin/**",
                     "/api/v1/project-assignments/**",
+                    "/api/v1/task-assignments/**",
 
                     "/api/v1/auth/**"
             ),
             "USER", List.of(
-                    "/api/v1/user/projects/**",
+                    "/api/v1/user/**",
 
                     "/api/v1/auth/**"
             )

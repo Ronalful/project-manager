@@ -42,18 +42,33 @@ spring:
         - id: doc-project-service
           uri: http://project-service:8080
           predicates:
-            - Path=/api/v1/projects/doc/**
+            - Path=/api/v1/doc/projects/**
           filters:
             - JwtAuthenticationFilter
 
 
 
-        - id: task-service
+        - id: admin-task-service
           uri: http://task-service:8080
           predicates:
-            - Path=/api/v1/tasks/**
+            - Path=/api/v1/admin/tasks/**
           filters:
             - JwtAuthenticationFilter
+
+        - id: user-task-service
+          uri: http://task-service:8080
+          predicates:
+            - Path=/api/v1/user/tasks/**
+          filters:
+            - JwtAuthenticationFilter
+
+        - id: doc-task-service
+          uri: http://task-service:8080
+          predicates:
+            - Path=/api/v1/doc/tasks/**
+          filters:
+            - JwtAuthenticationFilter
+
 
         - id: task-assignment-service
           uri: http://task-service:8080
@@ -69,6 +84,13 @@ spring:
           uri: http://auth-service:8080
           predicates:
             - Path=/api/v1/auth/**
+          filters:
+            - JwtAuthenticationFilter
+
+        - id: doc-auth-service
+          uri: http://auth-service:8080
+          predicates:
+            - Path=/api/v1/doc/auth/**
           filters:
             - JwtAuthenticationFilter
 

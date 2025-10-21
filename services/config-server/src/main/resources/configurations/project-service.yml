@@ -25,6 +25,6 @@ application:
 
 springdoc:
   swagger-ui:
-    path: "/api/v1/projects/doc/swagger-ui.html"
+    path: "/api/v1/doc/projects/swagger-ui.html"
   api-docs:
-    path: "/api/v1/projects/doc/v3/api-docs"
+    path: "/api/v1/doc/projects/v3/api-docs"

@@ -22,7 +22,7 @@ public class TaskAssignment {
     @ManyToOne
     @JoinColumn(name = "task_id")
     private Task task;
-    private Integer developerId;
+    private Integer userId;
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;

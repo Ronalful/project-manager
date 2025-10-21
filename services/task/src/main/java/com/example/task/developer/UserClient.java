@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.Optional;
 
 @FeignClient(
-        name = "developer-service",
-        url = "${application.config.developer-url}"
+        name = "user-service",
+        url = "${application.config.user-url}"
 )
-public interface DeveloperClient {
-    @GetMapping("/{developer-id}")
-    Optional<DeveloperResponse> getDeveloperById(@PathVariable("developer-id") Integer developerId);
+public interface UserClient {
+    @GetMapping("/{user-id}")
+    Optional<UserResponse> getUserById(@PathVariable("user-id") Integer userId);
 }

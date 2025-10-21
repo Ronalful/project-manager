@@ -101,7 +101,8 @@ public class AdminUserController {
     }
 
     @Operation(
-            summary = "Получить пользователя по email"
+            summary = "Получить пользователя по email",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping("/email/{email}")
     public ResponseEntity<AdminUserResponse> getUserByEmail(@PathVariable String email) {

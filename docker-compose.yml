@@ -15,18 +15,6 @@ services:
     networks:
       - microservices-net
 
-  developer-service:
-    build:
-      context: ./services/developer
-    ports:
-      - "8010:8080"
-    environment:
-      - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
-      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
-      - POSTGRESQL_PORT=${POSTGRESQL_PORT}
-    networks:
-      - microservices-net
-
   project-service:
     build:
       context: ./services/project

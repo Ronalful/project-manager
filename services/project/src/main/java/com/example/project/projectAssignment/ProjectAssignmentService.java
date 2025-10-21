@@ -1,11 +1,9 @@
 package com.example.project.projectAssignment;
 
-import com.example.project.developer.DeveloperClient;
-import com.example.project.developer.DeveloperResponse;
-import com.example.project.exception.DeveloperNotFoundException;
-import com.example.project.exception.ProjectAssignmentExistsException;
-import com.example.project.exception.ProjectAssignmentNotExistsException;
-import com.example.project.exception.ProjectNotFoundException;
+import com.example.project.user.UserClient;
+import com.example.project.user.UserResponse;
+import com.example.project.user.Role;
+import com.example.project.exception.*;
 import com.example.project.kafka.ProjectNotification;
 import com.example.project.kafka.ProjectOperation;
 import com.example.project.kafka.ProjectProducer;
@@ -24,45 +22,50 @@ public class ProjectAssignmentService {
 
     private final ProjectAssignmentRepository projectAssignmentRepository;
     private final ProjectRepository projectRepository;
-    private final DeveloperClient developerClient;
+    private final UserClient userClient;
     private final ProjectProducer projectProducer;
     private final TaskClient taskClient;
     private final TaskAssignmentClient taskAssignmentClient;
 
     @Transactional
-    public void assignDeveloper(ProjectAssignmentRequest request) {
-        var developer = developerClient.getDeveloperById(request.developerId())
-                .orElseThrow(() -> new DeveloperNotFoundException("Developer not found with id " + request.developerId()));
+    public void assignUser(ProjectAssignmentRequest request) {
+        var user = userClient.getUserById(request.userId())
+                .orElseThrow(() -> new DeveloperNotFoundException("Developer not found with id " + request.userId()));
+
+        if (!user.role().equals(Role.USER)) {
+            throw new DeveloperIsNotUser("Developer must be user");
+        }
+
         var project = projectRepository.findById(request.projectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project not found with id " + request.projectId()));
 
-        if (isDeveloperAssignedToProject(request.developerId(), project)) {
-            throw new ProjectAssignmentExistsException("This developer is already assigned to this project");
+        if (isDeveloperAssignedToProject(request.userId(), project)) {
+            throw new ProjectAssignmentExistsException("This user is already assigned to this project");
         }
 
-        sendDeveloperAssignedToProjectNotification(developer, project);
+        sendDeveloperAssignedToProjectNotification(user, project);
 
         projectAssignmentRepository.save(ProjectAssignment.builder()
                         .project(project)
-                        .developerId(developer.id())
+                        .userId(user.id())
                         .build());
     }
 
     private boolean isDeveloperAssignedToProject(Integer developerId, Project project) {
         return projectAssignmentRepository
-                .findByProjectAndDeveloperId(project, developerId)
+                .findByProjectAndUserId(project, developerId)
                 .isPresent();
     }
 
-    private void sendDeveloperAssignedToProjectNotification(DeveloperResponse developer, Project project) {
+    private void sendDeveloperAssignedToProjectNotification(UserResponse user, Project project) {
         projectProducer.send(new ProjectNotification(
-                developer,
+                user,
                 project.getName(),
                 ProjectOperation.ASSIGNED
         ));
     }
 
-    private void sendDeveloperUnassignedToProjectNotification(DeveloperResponse developer, Project project) {
+    private void sendDeveloperUnassignedToProjectNotification(UserResponse developer, Project project) {
         projectProducer.send(new ProjectNotification(
                 developer,
                 project.getName(),
@@ -71,24 +74,28 @@ public class ProjectAssignmentService {
     }
 
     @Transactional
-    public void unassignDeveloper(ProjectAssignmentRequest request) {
+    public void unassignUser(ProjectAssignmentRequest request) {
         var project = projectRepository.findById(request.projectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project not found with id " + request.projectId()));
-        var developer = developerClient.getDeveloperById(request.developerId())
-                .orElseThrow(() -> new DeveloperNotFoundException("Developer not found with id " + request.developerId()));
+        var user = userClient.getUserById(request.userId())
+                .orElseThrow(() -> new DeveloperNotFoundException("Developer not found with id " + request.userId()));
 
-        if (!isDeveloperAssignedToProject(request.developerId(), project)) {
-            throw new ProjectAssignmentNotExistsException("This developer is not assigned to this project");
+        if (!user.role().equals(Role.USER)) {
+            throw new DeveloperIsNotUser("Developer must be user");
         }
 
-        unassignDeveloperFromTasksInProject(developer, project);
+        if (!isDeveloperAssignedToProject(request.userId(), project)) {
+            throw new ProjectAssignmentNotExistsException("This user is not assigned to this project");
+        }
 
-        sendDeveloperUnassignedToProjectNotification(developer, project);
+        unassignDeveloperFromTasksInProject(user, project);
 
-        projectAssignmentRepository.deleteByDeveloperIdAndProject(request.developerId(), project);
+        sendDeveloperUnassignedToProjectNotification(user, project);
+
+        projectAssignmentRepository.deleteByUserIdAndProject(request.userId(), project);
     }
 
-    private void unassignDeveloperFromTasksInProject(DeveloperResponse developer, Project project) {
+    private void unassignDeveloperFromTasksInProject(UserResponse developer, Project project) {
         var tasks = taskClient.getTasksByProjectIdWithDevelopers(project.getId());
         for (var task : tasks) {
             if (task.developers().contains(developer)) {

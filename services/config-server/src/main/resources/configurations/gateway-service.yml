@@ -18,17 +18,17 @@ spring:
         locator:
           enabled: true
       routes:
-        - id: developer-service
-          uri: http://developer-service:8080
+        - id: admin-project-service
+          uri: http://project-service:8080
           predicates:
-            - Path=/api/v1/developers/**
+            - Path=/api/v1/admin/projects/**
           filters:
             - JwtAuthenticationFilter
 
-        - id: project-service
+        - id: user-project-service
           uri: http://project-service:8080
           predicates:
-            - Path=/api/v1/projects/**
+            - Path=/api/v1/user/projects/**
           filters:
             - JwtAuthenticationFilter
 
@@ -39,12 +39,36 @@ spring:
           filters:
             - JwtAuthenticationFilter
 
-        - id: task-service
-          uri: http://task-service:8080
+        - id: doc-project-service
+          uri: http://project-service:8080
           predicates:
-            - Path=/api/v1/tasks/**
+            - Path=/api/v1/doc/projects/**
           filters:
             - JwtAuthenticationFilter
+
+
+
+        - id: admin-task-service
+          uri: http://task-service:8080
+          predicates:
+            - Path=/api/v1/admin/tasks/**
+          filters:
+            - JwtAuthenticationFilter
+
+        - id: user-task-service
+          uri: http://task-service:8080
+          predicates:
+            - Path=/api/v1/user/tasks/**
+          filters:
+            - JwtAuthenticationFilter
+
+        - id: doc-task-service
+          uri: http://task-service:8080
+          predicates:
+            - Path=/api/v1/doc/tasks/**
+          filters:
+            - JwtAuthenticationFilter
+
 
         - id: task-assignment-service
           uri: http://task-service:8080
@@ -53,6 +77,9 @@ spring:
           filters:
             - JwtAuthenticationFilter
 
+
+
+
         - id: auth-service
           uri: http://auth-service:8080
           predicates:
@@ -60,15 +87,23 @@ spring:
           filters:
             - JwtAuthenticationFilter
 
+        - id: doc-auth-service
+          uri: http://auth-service:8080
+          predicates:
+            - Path=/api/v1/doc/auth/**
+          filters:
+            - JwtAuthenticationFilter
+
         - id: user-service
           uri: http://auth-service:8080
           predicates:
-            - Path=/api/v1/user/**
+            - Path=/api/v1/admin/users/**
           filters:
             - JwtAuthenticationFilter
 
 app:
   jwtSecret: ${JWT_SECRET}
   auth-url: http://auth-service:8080/api/v1/auth
+  user-url: http://auth-service:8080/api/v1/admin/users
 
 

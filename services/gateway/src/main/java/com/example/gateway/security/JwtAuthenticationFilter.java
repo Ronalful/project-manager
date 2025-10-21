@@ -1,6 +1,7 @@
 package com.example.gateway.security;
 
 import com.example.gateway.client.AuthClient;
+import com.example.gateway.client.UserClient;
 import com.example.gateway.config.RouteValidator;
 import com.example.gateway.service.JwtService;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -18,12 +19,14 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     private final RouteValidator routeValidator;
     private final JwtService jwtService;
     private final AuthClient authClient;
+    private final UserClient userClient;
 
-    public JwtAuthenticationFilter(RouteValidator routeValidator, JwtService jwtService, AuthClient authClient) {
+    public JwtAuthenticationFilter(RouteValidator routeValidator, JwtService jwtService, AuthClient authClient, UserClient userClient) {
         super(Config.class);
         this.routeValidator = routeValidator;
         this.jwtService = jwtService;
         this.authClient = authClient;
+        this.userClient = userClient;
     }
 
     @Override
@@ -62,11 +65,12 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                             return onError(exchange, HttpStatus.UNAUTHORIZED);
                         }
 
-                        return authClient.getUserByEmail(userEmail)
+                        return userClient.getUserByEmail(userEmail)
                                 .flatMap(user -> {
                                     ServerHttpRequest mutatedRequest = exchange.getRequest()
                                             .mutate()
                                             .header("X-User-Email", userEmail)
+                                            .header("X-User-Id", user.id().toString())
                                             .build();
 
                                     ServerWebExchange mutatedExchange = exchange.mutate()

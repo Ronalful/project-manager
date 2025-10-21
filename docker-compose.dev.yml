@@ -1,0 +1,216 @@
+services:
+  config-service:
+    build:
+      context: ./services/config-server\
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/config-server:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8888:8080"
+    command: mvn spring-boot:run
+    networks:
+      - microservices-net
+
+  gateway-service:
+    build:
+      context: ./services/gateway
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/gateway:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8222:8080"
+    environment:
+      - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_PORT=${POSTGRESQL_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+    command: ./wait-for.sh -t 0 discovery-service:8080 -- mvn spring-boot:run
+    networks:
+      - microservices-net
+
+  discovery-service:
+    build:
+      context: ./services/discovery
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/discovery:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8761:8080"
+    command: ./wait-for.sh -t 0 config-service:8080 -- mvn spring-boot:run
+    networks:
+      - microservices-net
+
+  project-service:
+    build:
+      context: ./services/project
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/project:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8020:8080"
+    environment:
+      - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_PORT=${POSTGRESQL_PORT}
+    command: ./wait-for.sh -t 0 discovery-service:8080 -- mvn spring-boot:run
+    networks:
+      - microservices-net
+
+  task-service:
+    build:
+      context: ./services/task
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/task:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8030:8080"
+    environment:
+      - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_PORT=${POSTGRESQL_PORT}
+    command: ./wait-for.sh -t 0 discovery-service:8080 -- mvn spring-boot:run
+    networks:
+      - microservices-net
+
+  notification-service:
+    build:
+      context: ./services/notification
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/notification:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8040:8080"
+    environment:
+      - MONGODB_LOGIN=${MONGODB_LOGIN}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_PORT=${MONGODB_PORT}
+    command: ./wait-for.sh -t 0 discovery-service:8080 -- mvn spring-boot:run
+    networks:
+      - microservices-net
+
+  auth-service:
+    build:
+      context: ./services/auth
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/auth:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8050:8080"
+    environment:
+      - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_PORT=${POSTGRESQL_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
+      - REFRESH_TOKEN_EXPIRATION=${REFRESH_TOKEN_EXPIRATION}
+      - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
+    command: ./wait-for.sh -t 0 discovery-service:8080 -- mvn spring-boot:run
+    networks:
+      - microservices-net
+
+  postgres:
+    container_name: postgresql
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRESQL_LOGIN}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - ${POSTGRESQL_PORT}:5432
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo
+    container_name: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo:/data
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    networks:
+      - microservices-net
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+    networks:
+      - microservices-net
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: ms_kafka
+    ports:
+      - "9092:9092"   # для контейнеров
+      - "29092:29092" # для локальных приложений
+    depends_on:
+      - zookeeper
+    environment:
+      # Node / cluster settings
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+
+      # === Listeners ===
+      # Внутренний (для Docker) и внешний (для хоста)
+      KAFKA_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      # === Zookeeper / controller settings ===
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+
+      # === Misc ===
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_RETENTION_HOURS: 168
+      CLUSTER_ID: "Mk3OEYBSD34fcwNTJENDM2Qk"
+    networks:
+      - microservices-net
+
+  mail-dev:
+    container_name: ms_mail_dev
+    image: maildev/maildev
+    ports:
+      - 1080:1080
+      - 1025:1025
+    networks:
+      - microservices-net
+
+  zipkin:
+    container_name: zipkin
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411
+    networks:
+      - microservices-net
+
+networks:
+  microservices-net:
+    driver: bridge
+
+volumes:
+  postgres:
+  mongo:

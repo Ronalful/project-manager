@@ -1,5 +1,6 @@
 package com.example.project.handler;
 
+import com.example.project.exception.DeveloperIsNotUser;
 import com.example.project.exception.ProjectAssignmentExistsException;
 import com.example.project.exception.ProjectAssignmentNotExistsException;
 import com.example.project.exception.ProjectNotFoundException;
@@ -27,6 +28,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(e.contentUTF8());
+    }
+
+    @ExceptionHandler(DeveloperIsNotUser.class)
+    public ResponseEntity<String> handle(DeveloperIsNotUser e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
     }
 
     @ExceptionHandler(ProjectAssignmentExistsException.class)

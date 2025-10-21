@@ -1,6 +1,6 @@
 package com.example.task.project;
 
-import com.example.task.developer.DeveloperResponse;
+import com.example.task.developer.UserResponse;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ public record ProjectWithDevelopersResponse(
         Integer id,
         String name,
         String description,
-        List<DeveloperResponse> developers
+        List<UserResponse> developers
 ) {
     public ProjectResponse toProjectResponse() {
         return new ProjectResponse(

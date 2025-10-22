@@ -16,7 +16,6 @@ public class RouteValidator {
     ));
 
     static {
-        openApiEndpoints.addAll(getSwaggerForService("developers"));
         openApiEndpoints.addAll(getSwaggerForService("tasks"));
         openApiEndpoints.addAll(getSwaggerForService("projects"));
         openApiEndpoints.addAll(getSwaggerForService("auth"));
@@ -37,26 +36,21 @@ public class RouteValidator {
         );
 
         return swaggerEndpoints.stream()
-                .map(endpoint -> "/api/v1/" + path + endpoint)
+                .map(endpoint -> "/api/v1/doc/" + path + endpoint)
                 .toList();
     }
 
     private static final Map<String, List<String>> roleBasedEndpoints = Map.of(
             "ADMIN", List.of(
-                    "/api/v1/developers/**",
-                    "/api/v1/projects/**",
+                    "/api/v1/admin/**",
                     "/api/v1/project-assignments/**",
-                    "/api/v1/tasks/**",
                     "/api/v1/task-assignments/**",
-                    "/api/v1/auth/**",
-                    "/api/v1/user/admin/**"
+
+                    "/api/v1/auth/**"
             ),
             "USER", List.of(
-                    "/api/v1/developers/**",
-                    "/api/v1/projects/**",
-                    "/api/v1/project-assignments/**",
-                    "/api/v1/tasks/**",
-                    "/api/v1/task-assignments/**",
+                    "/api/v1/user/**",
+
                     "/api/v1/auth/**"
             )
     );

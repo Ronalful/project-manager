@@ -30,22 +30,6 @@
     color: var(--gray);
 }
 
-.login-form-group .field{
-    width: 100%;
-    padding: 10px;
-    border: 0;
-    border-radius: 10px;
-    box-sizing: border-box;
-    background-color: var(--field);
-    color: var(--font-main);
-    margin-top: 15px;
-    margin-bottom: 5px;
-}
-
-.field::placeholder{
-    color: var(--font-additional);
-}
-
 .error {
     text-align: left;
     color: var(--error-text);
@@ -55,10 +39,6 @@
 .error.title{
     font-size: 16px;
     text-align: center;
-}
-
-.login-form-group .field-error{
-    border: 2px solid var(--error-text);
 }
 
 .answer-message{

@@ -2,6 +2,7 @@
 import '../../assets/styles/main.css'
 import SubmitButton from "@/components/ui/SubmitButton.vue";
 import GotoLink from "@/components/ui/GotoLink.vue";
+import Input from "@/components/ui/Input.vue";
 </script>
 
 <template>
@@ -13,30 +14,25 @@ import GotoLink from "@/components/ui/GotoLink.vue";
         </h1>
         <h2 class="login-second-title">Давайте начнём!</h2>
       </div>
-      <form @submit.prevent="handleLogin">
+      <form @submit.prevent="handleLogin" novalidate>
         <p v-if="errors.incorrect" class="error title">{{ errors.incorrect }}</p>
         <p v-if="errors.others" class="error title">{{ errors.others }}</p>
         <div class="login-form-group-container">
-          <div class="login-form-group">
-            <input
-                class="field"
-                id="email"
-                v-model="formData.email"
-                type="text"
-                placeholder="Email"/>
-            <p v-if="errors.email" class="error">{{ errors.email }}</p>
-          </div>
+          <Input
+              ref="emailField"
+              v-model="formData.email"
+              type="email"
+              placeholder="Email"
+              required
+          ></Input>
 
-          <div class="login-form-group">
-            <input
-                class="field"
-                id="password"
-                v-model="formData.password"
-                type="password"
-                placeholder="Пароль"
-            />
-            <p v-if="errors.password" class="error">{{ errors.password }}</p>
-          </div>
+          <Input
+              ref="passwordField"
+              v-model="formData.password"
+              type="password"
+              placeholder="Пароль"
+              required
+          ></Input>
 
         <SubmitButton>Войти</SubmitButton>
 
@@ -66,7 +62,7 @@ export default {
     async handleLogin() {
       this.errors = {}
 
-      if (!this.validateEmail() || !this.validatePassword()) {
+      if (!this.validateForm()) {
         return;
       }
 
@@ -85,36 +81,20 @@ export default {
       }
     },
 
-    validateEmail() {
-      const emailField = document.getElementById('email');
+    validateForm(){
+      const fields = this.$refs
+      let isValid = true
 
-      if (!this.formData.email) {
-        this.errors.email = 'Введите email';
-        emailField.classList.add('field-error');
-        return false;
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.formData.email)) {
-        emailField.classList.add('field-error');
-        this.errors.email = 'Введите корректный email';
-        return false;
-      } else {
-        emailField.classList.remove('field-error');
-        return true;
-      }
-    },
+      console.log(fields)
 
-    validatePassword() {
-      const passwordField = document.getElementById('password');
+      Object.values(fields).forEach(field => {
+          if (!field.isValid()) {
+            isValid = false
+          }
+      })
 
-      if (!this.formData.password) {
-        this.errors.password = 'Введите пароль';
-        passwordField.classList.add('field-error');
-        return false;
-      } else {
-        passwordField.classList.remove('field-error');
-        return true;
-      }
-    },
-
+      return isValid
+    }
   }
 }
 </script>

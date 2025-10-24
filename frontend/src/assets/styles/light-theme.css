@@ -11,5 +11,6 @@ html {
     --gray2: #ccc;
     --font-main: #000000;
     --font-additional: rgb(133, 133, 133);
-    --svg-icon-color: #000
+    --svg-icon-color: #000;
+    --disabled: #f8f9fa;
 }

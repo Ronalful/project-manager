@@ -1,36 +1,31 @@
 <script setup>
 import '../../assets/styles/main.css'
 import SubmitButton from "@/components/ui/SubmitButton.vue";
-import NotificationWithBack from "@/components/NotificationWithBack.vue";
+import Input from "@/components/ui/Input.vue";
 </script>
 
 <template>
   <div class="login-main-container recovery">
     <div class="login-container">
       <h2 class="login-second-title">Восстановление пароля</h2>
-      <form @submit.prevent="handleRecovery">
+      <form @submit.prevent="handleRecovery" novalidate>
         <p v-if="errors.incorrect" class="error title">{{ errors.incorrect }}</p>
         <div class="login-form-group-container">
-          <div class="login-form-group">
-            <input
-                class="field"
-                id="email"
-                v-model="formData.email"
-                type="text"
-                placeholder="Email"/>
-          </div>
-          <p v-if="errors.email" class="error">{{ errors.email }}</p>
+          <Input
+              ref="emailField"
+              v-model="formData.email"
+              type="email"
+              placeholder="Email"
+              required
+          ></Input>
 
-          <div class="login-form-group">
-            <input
-                class="field"
-                id="secret"
-                v-model="formData.secret"
-                type="text"
-                placeholder="Секретное слово"
-            />
-          </div>
-          <p v-if="errors.secret" class="error">{{ errors.secret }}</p>
+          <Input
+              ref="secretField"
+              v-model="formData.secret"
+              type="text"
+              placeholder="Секретное слово"
+              required
+          ></Input>
 
           <SubmitButton>Восстановить</SubmitButton>
 
@@ -59,7 +54,7 @@ export default {
     async handleRecovery() {
       this.errors = {};
 
-      if (!this.validateEmail() || !this.validateSecret()) {
+      if (!this.validateForm()) {
         return false
       }
 
@@ -77,35 +72,18 @@ export default {
       }
     },
 
-    validateEmail() {
-      const emailField = document.getElementById('email');
+    validateForm(){
+      const fields = this.$refs
+      let isValid = true
 
-      if (!this.formData.email) {
-        this.errors.email = 'Введите email';
-        emailField.classList.add('field-error');
-        return false;
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.formData.email)) {
-        emailField.classList.add('field-error');
-        this.errors.email = 'Введите корректный email';
-        return false;
-      } else {
-        emailField.classList.remove('field-error');
-        return true;
-      }
-    },
+      Object.values(fields).forEach(field => {
+        if (!field.isValid()) {
+          isValid = false
+        }
+      })
 
-    validateSecret() {
-      const secretField = document.getElementById('secret');
-
-      if (!this.formData.secret) {
-        this.errors.secret = 'Введите секретное слово';
-        secretField.classList.add('field-error');
-        return false;
-      } else {
-        secretField.classList.remove('field-error');
-        return true;
-      }
-    },
+      return isValid
+    }
   }
 }
 </script>

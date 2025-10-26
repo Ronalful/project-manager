@@ -85,8 +85,6 @@ export default {
       const fields = this.$refs
       let isValid = true
 
-      console.log(fields)
-
       Object.values(fields).forEach(field => {
           if (!field.isValid()) {
             isValid = false

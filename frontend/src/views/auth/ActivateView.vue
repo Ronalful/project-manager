@@ -1,6 +1,7 @@
 <script setup>
 import '../../assets/styles/main.css'
 import SubmitButton from "@/components/ui/SubmitButton.vue";
+import Input from "@/components/ui/Input.vue";
 </script>
 
 <template>
@@ -14,26 +15,24 @@ import SubmitButton from "@/components/ui/SubmitButton.vue";
           <a href="#secret">секретное слово</a>
           для активации аккаунта</h3>
         <p v-if="errors.others" class="error title">{{ errors.others }}</p>
-        <div class="login-form-group">
-          <input
-              class="field"
-              id="password"
-              v-model="activationData.password"
-              type="password"
-              placeholder="Новый пароль"
-          />
-          <p v-if="errors.password" class="error">{{ errors.password }}</p>
-        </div>
-        <div class="login-form-group">
-          <input
-              class="field"
-              id="secret"
-              v-model="activationData.secret"
-              type="text"
-              placeholder="Секретное слово"
-          />
-          <p v-if="errors.secret" class="error">{{ errors.secret }}</p>
-        </div>
+
+        <Input
+            id="password"
+            ref="passwordField"
+            v-model="activationFormData.password"
+            type="password"
+            placeholder="Пароль"
+            required
+        ></Input>
+
+        <Input
+            id="secret"
+            ref="secretField"
+            v-model="activationFormData.secret"
+            type="text"
+            placeholder="Секретное слово"
+            required
+        ></Input>
 
         <SubmitButton></SubmitButton>
 
@@ -48,7 +47,7 @@ import {authService} from "@/services/AuthService.js";
 export default {
   data() {
     return {
-      activationData: {
+      activationFormData: {
         password: '',
         secret: '',
       },
@@ -59,45 +58,32 @@ export default {
     async confirmActivationHandle(){
       this.errors = {}
 
-      if (!this.validateSecret() || !this.validatePassword()) {
-        return;
+      if (!this.validateForm()) {
+        return false
       }
 
       try {
         const response = await authService.confirmActivation({
-          secretPhrase: this.activationData.secret,
-          password: this.activationData.password
+          secretPhrase: this.activationFormData.secret,
+          password: this.activationFormData.password
         })
       } catch (error){
         this.errors.others = error.response?.data?.message || 'Ошибка активации аккаунта. Обратитесь к администратору.'
       }
     },
 
-    validateSecret() {
-      const secretField = document.getElementById('secret');
+    validateForm(){
+      const fields = this.$refs
+      let isValid = true
 
-      if (!this.activationData.secret) {
-        this.errors.secret = 'Введите секретное слово';
-        secretField.classList.add('field-error');
-        return false;
-      } else {
-        secretField.classList.remove('field-error');
-        return true;
-      }
-    },
+      Object.values(fields).forEach(field => {
+        if (!field.isValid()) {
+          isValid = false
+        }
+      })
 
-    validatePassword() {
-      const passwordField = document.getElementById('password');
-
-      if (!this.activationData.password) {
-        this.errors.password = 'Введите пароль';
-        passwordField.classList.add('field-error');
-        return false;
-      } else {
-        passwordField.classList.remove('field-error');
-        return true;
-      }
-    },
+      return isValid
+    }
   }
 }
 </script>

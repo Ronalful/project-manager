@@ -1,7 +1,7 @@
 export default [
     {
         path: '/login',
-        component: () => import('@/views/auth/AuthLayout.vue'),
+        component: () => import('@/layouts/AuthLayout.vue'),
         meta: {requiresGuest: true},
         children: [
             {

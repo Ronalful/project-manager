@@ -1,0 +1,19 @@
+<script setup xmlns="http://www.w3.org/1999/html">
+
+import DefaultHeader from "@/components/headers/DefaultHeader.vue";
+import DefaultFooter from "@/components/footers/DefaultFooter.vue";
+</script>
+
+<template>
+  <DefaultHeader/>
+  <div class="default-layout">
+    <div class="default-container">
+      <router-view />
+    </div>
+  </div>
+  <DefaultFooter/>
+</template>
+
+<style scoped>
+
+</style>

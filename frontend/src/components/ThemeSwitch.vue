@@ -43,12 +43,8 @@ export default {
 </script>
 
 <style scoped>
-.theme-switch__icon{
-  width: 30px;
-  height: 30px;
-}
-
 .theme-switch{
+  width: fit-content;
   display: flex;
   flex-direction: row;
   align-items: center;

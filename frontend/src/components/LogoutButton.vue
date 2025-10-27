@@ -9,7 +9,7 @@ import LogoutIcon from "@/components/icons/LogoutIcon.vue";
         type="button"
         @click="logoutHandle"
     >
-      <LogoutIcon></LogoutIcon>
+      <LogoutIcon/>
     </button>
   </div>
 </template>
@@ -31,5 +31,6 @@ export default {
   background: rgb(0, 0, 0, 0);
   border: 0;
   cursor: pointer;
+  margin: 0 0 0 1em;
 }
 </style>

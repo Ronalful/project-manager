@@ -4,9 +4,11 @@ import AuthHeader from "@/components/headers/AuthHeader.vue";
 
 <template>
   <AuthHeader/>
-  <div class="auth-layout">
-    <div class="auth-container">
-      <router-view />
+  <main>
+    <div class="auth-layout">
+      <div class="auth-container">
+        <router-view />
+      </div>
     </div>
-  </div>
+  </main>
 </template>

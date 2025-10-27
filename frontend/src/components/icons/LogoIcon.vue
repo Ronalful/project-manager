@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div>
+  <div class="logo__icon">
     <a href="/">
       <img class="logo__img" src="@/assets/img/logo_hor-light.png" alt="logo"/>
     </a>
@@ -11,6 +11,10 @@
 </template>
 
 <style scoped>
+.logo__icon{
+  margin: 0.5em 1em 0.5em 1em;
+}
+
 .logo__img{
   width: 200px;
 }

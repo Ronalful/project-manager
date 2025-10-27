@@ -6,11 +6,13 @@ import DefaultFooter from "@/components/footers/DefaultFooter.vue";
 
 <template>
   <DefaultHeader/>
-  <div class="default-layout">
-    <div class="default-container">
-      <router-view />
+  <main>
+    <div class="default-layout">
+      <div class="default-container">
+        <router-view />
+      </div>
     </div>
-  </div>
+  </main>
   <DefaultFooter/>
 </template>
 

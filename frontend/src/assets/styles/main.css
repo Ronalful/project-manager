@@ -17,6 +17,10 @@ body{
   color: var(--font-main);
 }
 
+main{
+  margin-top: 80px;
+}
+
 button, input, textarea {
   font-family: inherit; /* Унаследовать шрифт от body */
   font-size: inherit;
@@ -50,4 +54,3 @@ a:hover{
   color: var(--additional-color);
   text-decoration: underline;
 }
-

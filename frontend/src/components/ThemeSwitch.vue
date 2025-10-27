@@ -48,6 +48,7 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
+  margin: 0 1em 0 1em;
 }
 
 .theme-switch__label {

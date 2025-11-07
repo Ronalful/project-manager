@@ -10,6 +10,11 @@ export default [
                 path: '',
                 name: 'Home',
                 component: () => import('@/views/HomeView.vue')
+            },
+            {
+                path: 'projects',
+                name: 'Projects',
+                component: () => import('@/views/projects/ProjectsView.vue')
             }
         ]
     },

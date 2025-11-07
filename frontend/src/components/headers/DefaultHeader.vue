@@ -6,6 +6,21 @@ import DropdownIcon from "@/components/icons/DropdownIcon.vue";
 import LogoutButton from "@/components/LogoutButton.vue";
 import NotificationButton from "@/components/NotificationButton.vue";
 import MenuButton from "@/components/ui/MenuButton.vue";
+
+import { useRoute } from 'vue-router'
+const route = useRoute()
+
+const menuItems = [
+  { path: '/tasks', title: 'Задачи' },
+  { path: '/projects', title: 'Проекты' },
+]
+
+const isActive = (path) => {
+  if (path === '/') {
+    return route.path === '/'
+  }
+  return route.path.startsWith(path)
+}
 </script>
 
 <template>
@@ -18,8 +33,15 @@ import MenuButton from "@/components/ui/MenuButton.vue";
             <LogoIcon/>
 
             <nav class="header__nav">
-              <a class="header__nav-link active" href="#">Задачи</a>
-              <a class="header__nav-link" href="#">Проекты</a>
+              <router-link
+                  v-for="item in menuItems"
+                  :key="item.path"
+                  :to="item.path"
+                  class="header__nav-link"
+                  :class="{ 'active': isActive(item.path) }"
+              >
+                {{ item.title }}
+              </router-link>
             </nav>
           </div>
 
@@ -37,6 +59,10 @@ import MenuButton from "@/components/ui/MenuButton.vue";
     </div>
   </header>
 </template>
+
+<script>
+
+</script>
 
 <style scoped>
 .header__section{

@@ -13,7 +13,28 @@ import ProjectCart from "@/components/ProjectCard.vue";
 </template>
 
 <script>
+import {projectAdminService} from "@/services/ProjectAdminService.js";
 
+export default {
+  data() {
+    return {
+      projects: [],
+      errors: {},
+    };
+  },
+  methods: {
+    async handleLoadProject() {
+      const response = await projectAdminService.getAllProjects()
+      if(response.success){
+        this.projects = response.data;
+        console.log(this.projects)
+      }
+    },
+  },
+  mounted() {
+    this.handleLoadProject();
+  },
+}
 </script>
 
 <style scoped>

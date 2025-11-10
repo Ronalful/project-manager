@@ -26,19 +26,19 @@
         </div>
         <div class="avatars-container">
           <span
-              v-for="performer in visiblePerformers"
+              v-for="developer in visibleDevelopers"
               class="avatar"
           >
             <span class="avatar-name">
-               {{ formatInitials(performer) }}
+               {{ formatInitials(developer) }}
             </span>
           </span>
           <span
-              v-if="hiddenPerformersCount > 0"
+              v-if="hiddenDevelopersCount > 0"
               class="avatars-counter"
           >
             <span class="avatars-name">
-              +{{ hiddenPerformersCount }}
+              +{{ hiddenDevelopersCount }}
             </span>
           </span>
         </div>
@@ -57,19 +57,19 @@ export default {
     }
   },
   methods: {
-    formatInitials(performer) {
-      const firstInitial = performer.firstname.charAt(0);
-      const lastInitial = performer.lastname.charAt(0);
+    formatInitials(developer) {
+      const firstInitial = developer.firstname.charAt(0);
+      const lastInitial = developer.lastname.charAt(0);
       return `${firstInitial}${lastInitial}`;
     }
   },
   computed: {
-    visiblePerformers() {
-      return this.project.performers?.slice(0, 3) || []
+    visibleDevelopers() {
+      return this.project.developers?.slice(0, 3) || []
     },
 
-    hiddenPerformersCount() {
-      const total = this.project.performers?.length || 0
+    hiddenDevelopersCount() {
+      const total = this.project.developers?.length || 0
       return total > 3 ? total - 3 : 0
     }
   },

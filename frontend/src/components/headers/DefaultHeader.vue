@@ -80,7 +80,6 @@ const isActive = (path) => {
   color: var(--gray);
   padding: 0.5rem;
   margin: 0.5em;
-  font-size: 20px;
 }
 
 .header__nav-link:hover {

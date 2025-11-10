@@ -8,7 +8,7 @@ import ProjectCart from "@/components/ProjectCard.vue";
     <h1>Проекты</h1>
   </div>
   <div class="projects-content">
-    <ProjectCart/>
+    <ProjectCart v-for="proj in projs" :project="proj"/>
   </div>
 </template>
 
@@ -20,6 +20,38 @@ export default {
     return {
       projects: [],
       errors: {},
+      projs: [
+        {
+          id: '1',
+          name: "Проект 1",
+          descriptor: "Первый проект",
+          performers: [
+            {id: 1, firstname: "Софья", lastname: "Позднякова"},
+            {id: 2, firstname: "Алина", lastname: "Комарова"}
+          ]
+        },
+        {
+          id: '2',
+          name: "Проект 2",
+          descriptor: "Второй проект",
+          performers: [
+            {id: 3, firstname: "Анастасия", lastname: "Кузнецова"},
+            {id: 2, firstname: "Алина", lastname: "Комарова"},
+            {id: 4, firstname: "Денис", lastname: "Рыжов"}
+          ]
+        },
+        {
+          id: '3',
+          name: "Проект 3",
+          descriptor: "Третий проект",
+          performers: [
+            {id: 5, firstname: "Александра", lastname: "Алексеева"},
+            {id: 6, firstname: "Снежанна", lastname: "Орлова"},
+            {id: 4, firstname: "Денис", lastname: "Рыжов"},
+            {id: 7, firstname: "Артём", lastname: "Воробьев"}
+          ]
+        }
+      ]
     };
   },
   methods: {
@@ -44,5 +76,6 @@ export default {
 
 .projects-content{
   margin-top: 5em;
+  display: flex;
 }
 </style>

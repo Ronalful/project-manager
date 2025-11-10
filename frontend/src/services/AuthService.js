@@ -1,12 +1,16 @@
 import apiClient from '@/api/index.js'
 import router from '@/router/index.js';
 import {tokenService} from '@/services/TokenService.js'
+import {useUserStore} from "@/stores/user.js";
 
 export const authService = {
     async login({email, password}) {
         try {
             const response = await apiClient.post('/auth-api/login', {email, password})
-            tokenService.setTokens(response.data.accessToken, response.data.refreshToken)
+
+            const userStore = useUserStore()
+            userStore.setAuth(response.data.accessToken, response.data.refreshToken)
+
             router.push('/')
             return {success: true, data: response.data}
         } catch (error) {
@@ -40,7 +44,8 @@ export const authService = {
         } catch (error) {
             console.warn('Logout request failed:', error)
         } finally {
-            tokenService.clearTokens()
+            const userStore = useUserStore()
+            userStore.clearAuth()
         }
     },
 

@@ -4,6 +4,7 @@ import authRouters from "./auth.js"
 import adminRouters from "./admin.js"
 import defaultRouters from "./default.js"
 import NotFoundView from "@/views/NotFoundView.vue";
+import {useUserStore} from "@/stores/user.js";
 
 const routes = [
         ...authRouters,
@@ -51,6 +52,14 @@ router.beforeEach(async(to, from, next) => {
     if (to.meta.requiresGuest) {
         if (isAuthenticated) {
             next({name: 'Home'})
+            return
+        }
+    }
+
+    if(to.meta.requiresAdmin){
+        const userStore = useUserStore()
+        if(!userStore.isAdmin){
+            // что-нибудь придумать для доступа
             return
         }
     }

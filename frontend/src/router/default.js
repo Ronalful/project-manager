@@ -20,9 +20,20 @@ export default [
                         component: () => import('@/views/projects/ProjectsView.vue'),
                     },
                     {
-                        name: 'ProjectDetail',
                         path: ':id/',
-                        component: () => import('@/views/projects/ProjectDetailView.vue'),
+                        children:[
+                            {
+                                path: '',
+                                name: 'ProjectDetail',
+                                component: () => import('@/views/projects/ProjectDetailView.vue'),
+                            },
+                            {
+                                path: 'edit/',
+                                name: 'ProjectEdit',
+                                component: () => import('@/views/projects/ProjectEditView.vue'),
+                                meta: {requiresAdmin: true}
+                            }
+                        ]
                     },
                 ],
             },

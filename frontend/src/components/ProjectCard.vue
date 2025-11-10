@@ -1,12 +1,15 @@
+<script setup>
+
+</script>
+
 <template>
   <div
       class="project-card"
-      @click="$emit('click')"
   >
     <div class="card-content">
       <div class="card-header">
         <h4 class="project-title">
-          {{ title }}
+          {{ data.name }}
         </h4>
       </div>
 
@@ -16,12 +19,11 @@
         </div>
         <div class="avatars-container">
           <span
-              v-for="(avatar, index) in avatars"
-              :key="index"
+              v-for="performer in data.performers"
               class="avatar"
           >
             <span class="avatar-name">
-              {{ avatar }}
+               {{ formatInitials(performer) }}
             </span>
           </span>
         </div>
@@ -30,21 +32,19 @@
   </div>
 </template>
 
-<script setup>
-// Props
-const props = defineProps({
-  title: {
-    type: String,
-    default: 'Название проектааааа'
-  },
-  avatars: {
-    type: Array,
-    default: () => ['ЕВ', 'МП', 'ОН']
-  },
-})
+<script>
+export default {
+  data(){
 
-// Emits
-defineEmits(['click'])
+  },
+  methods: {
+    formatInitials(performer) {
+      const firstInitial = performer.firstname.charAt(0) + '.';
+      const lastInitial = performer.lastname.charAt(0) + '.';
+      return `${performer.lastname} ${firstInitial}${lastInitial}`;
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -55,6 +55,7 @@ defineEmits(['click'])
   max-height: 10rem;
   padding: 0 1em 1em 1em;
   text-align: left;
+  font-size: 20px;
 }
 
 .avatars-titles{

@@ -8,12 +8,46 @@ import ProjectCart from "@/components/ProjectCard.vue";
     <h1>Проекты</h1>
   </div>
   <div class="projects-content">
-    <ProjectCart/>
+    <ProjectCart v-for="proj in projs" :data="proj"/>
   </div>
 </template>
 
 <script>
-
+export default {
+  data() {
+    return{
+       projs: [
+          {
+            name: "Проект 1",
+            descriptor: "Первый проект",
+            performers: [
+              {id: 1, firstname: "Софья", lastname: "Позднякова"},
+              {id: 2, firstname: "Алина", lastname: "Комарова"}
+            ]
+          },
+          {
+            name: "Проект 2",
+            descriptor: "Второй проект",
+            performers: [
+              {id: 3, firstname: "Анастасия", lastname: "Кузнецова"},
+              {id: 2, firstname: "Алина", lastname: "Комарова"},
+              {id: 4, firstname: "Денис", lastname: "Рыжов"}
+            ]
+          },
+          {
+            name: "Проект 3",
+            descriptor: "Третий проект",
+            performers: [
+              {id: 5, firstname: "Александра", lastname: "Алексеева"},
+              {id: 6, firstname: "Снежанна", lastname: "Орлова"},
+              {id: 4, firstname: "Денис", lastname: "Рыжов"},
+              {id: 7, firstname: "Артём", lastname: "Воробьев"}
+            ]
+          }
+      ]
+    }
+  }
+}
 </script>
 
 <style scoped>

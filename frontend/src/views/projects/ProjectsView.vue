@@ -44,5 +44,7 @@ export default {
 .projects-content{
   margin-top: 5em;
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 </style>

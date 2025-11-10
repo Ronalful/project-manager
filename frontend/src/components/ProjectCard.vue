@@ -95,6 +95,7 @@ export default {
   font-size: 20px;
   margin: 0 0 1em 1em;
   min-width: 10em;
+  min-height: 5em;
   background-color: var(--background3);
 }
 

@@ -1,6 +1,7 @@
 <script setup>
 
 import ProjectCart from "@/components/ProjectCard.vue";
+import AddProjectCard from "@/components/AddProjectCard.vue";
 </script>
 
 <template>
@@ -9,6 +10,7 @@ import ProjectCart from "@/components/ProjectCard.vue";
   </div>
   <div class="projects-content">
     <ProjectCart v-for="project in projects" :project="project"/>
+    <AddProjectCard/>
   </div>
 </template>
 

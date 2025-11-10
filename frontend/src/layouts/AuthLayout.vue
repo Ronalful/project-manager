@@ -12,3 +12,9 @@ import AuthHeader from "@/components/headers/AuthHeader.vue";
     </div>
   </main>
 </template>
+
+<style>
+main{
+  margin-top: 0;
+}
+</style>

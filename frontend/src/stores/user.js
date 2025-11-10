@@ -19,10 +19,14 @@ export const useUserStore = defineStore('user', {
     getters: {
         //isAdmin: (state) => state.user.role === 'ADMIN',
         isAdmin(state){
-            console.log(state.user.role)
             return state.user.role === 'ADMIN'
         },
-        isUser: (state) => state.user.role === 'USER'
+        isUser (state){
+            return state.user.role === 'USER'
+        },
+        getEmail(state) {
+            return state.user.email
+        },
     },
     actions: {
         setAuth(accessToken, refreshToken = null) {

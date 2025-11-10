@@ -8,6 +8,7 @@ import NotificationButton from "@/components/NotificationButton.vue";
 import MenuButton from "@/components/ui/MenuButton.vue";
 
 import { useRoute } from 'vue-router'
+import UserMenu from "@/components/UserMenu.vue";
 const route = useRoute()
 
 const menuItems = [
@@ -48,10 +49,7 @@ const isActive = (path) => {
           <div class="header__right-menu">
             <ThemeSwitch/>
             <NotificationButton/>
-            <div class="profile">
-              <span class="profile__span">Имя пользователя</span>
-              <DropdownIcon/>
-            </div>
+            <UserMenu/>
             <LogoutButton/>
           </div>
         </section>
@@ -104,23 +102,6 @@ const isActive = (path) => {
 .header__right-menu{
   display: flex;
   align-items: center;
-}
-
-.profile{
-  width: fit-content;
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: row;
-  align-items: baseline;
-  border-radius: 5px;
-  height: 100%;
-  margin: 0 0.5em 0 0.5em;
-  padding: 1em;
-}
-
-.profile:hover{
-  background: rgba(191, 191, 191, 0.37);
-  cursor: pointer;
 }
 
 .header__container{

@@ -20,7 +20,7 @@ export default [
                         component: () => import('@/views/projects/ProjectsView.vue'),
                     },
                     {
-                        path: ':id/',
+                        path: ':id',
                         children:[
                             {
                                 path: '',
@@ -28,13 +28,19 @@ export default [
                                 component: () => import('@/views/projects/ProjectDetailView.vue'),
                             },
                             {
-                                path: 'edit/',
+                                path: 'edit',
                                 name: 'ProjectEdit',
                                 component: () => import('@/views/projects/ProjectEditView.vue'),
                                 meta: {requiresAdmin: true}
-                            }
+                            },
                         ]
                     },
+                    {
+                        path: 'create',
+                        name: 'ProjectCreate',
+                        component: () => import('@/views/projects/ProjectCreateView.vue'),
+                        meta: {requiresAdmin: true}
+                    }
                 ],
             },
         ]

@@ -6,7 +6,7 @@ export const authService = {
     async login({email, password}) {
         try {
             const response = await apiClient.post('/auth-api/login', {email, password})
-            tokenService.setTokens(response.accessToken, response.refreshToken)
+            tokenService.setTokens(response.data.accessToken, response.data.refreshToken)
             router.push('/')
             return {success: true, data: response.data}
         } catch (error) {

@@ -13,9 +13,19 @@ export default [
             },
             {
                 path: 'projects',
-                name: 'Projects',
-                component: () => import('@/views/projects/ProjectsView.vue')
-            }
+                children:[
+                    {
+                        path: '',
+                        name: 'Projects',
+                        component: () => import('@/views/projects/ProjectsView.vue'),
+                    },
+                    {
+                        name: 'ProjectDetail',
+                        path: ':id/',
+                        component: () => import('@/views/projects/ProjectDetailView.vue'),
+                    },
+                ],
+            },
         ]
     },
 ]

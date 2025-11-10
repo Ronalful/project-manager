@@ -48,9 +48,11 @@ p{
 a{
   color: var(--main-color);
   text-decoration: none;
+  cursor: pointer;
 }
 
 a:hover{
   color: var(--additional-color);
   text-decoration: underline;
+
 }

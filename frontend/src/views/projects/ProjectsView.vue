@@ -8,7 +8,7 @@ import ProjectCart from "@/components/ProjectCard.vue";
     <h1>Проекты</h1>
   </div>
   <div class="projects-content">
-    <ProjectCart v-for="proj in projs" :data="proj"/>
+    <ProjectCart v-for="proj in projs" :project="proj"/>
   </div>
 </template>
 
@@ -18,6 +18,7 @@ export default {
     return{
        projs: [
           {
+            id: '1',
             name: "Проект 1",
             descriptor: "Первый проект",
             performers: [
@@ -26,6 +27,7 @@ export default {
             ]
           },
           {
+            id: '2',
             name: "Проект 2",
             descriptor: "Второй проект",
             performers: [
@@ -35,6 +37,7 @@ export default {
             ]
           },
           {
+            id: '3',
             name: "Проект 3",
             descriptor: "Третий проект",
             performers: [
@@ -57,5 +60,6 @@ export default {
 
 .projects-content{
   margin-top: 5em;
+  display: flex;
 }
 </style>

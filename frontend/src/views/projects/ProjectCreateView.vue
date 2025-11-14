@@ -6,39 +6,35 @@
         <button @click="close" class="close-btn">&times;</button>
       </div>
 
-      <form @submit.prevent="submitForm" class="modal-body">
-        <div class="form-group">
-          <label>Название проекта</label>
-          <input
+      <form @submit.prevent="submitForm" class="modal-body" novalidate>
+          <Input
+              ref="nameField"
               v-model="form.name"
               type="text"
+              placeholder="Название проекта"
               required
-          >
-        </div>
+          ></Input>
 
-        <div class="form-group">
-          <label>Описание</label>
-          <textarea
-              v-model="form.description"
-              rows="3"
-          ></textarea>
-        </div>
+          <Select
+              v-model="form.developers"
+              :options="users"
+              placeholder="Исполнители"
+              multiple
+          ></Select>
+
+          <Textarea
+            ref="descriptionField"
+            v-model="form.description"
+            placeholder="Описание проекта"
+            required
+            >
+          </Textarea>
 
         <div class="form-actions">
-          <button
-              type="button"
-              @click="close"
-              class="btn btn-secondary"
-          >
-            Отмена
-          </button>
-          <button
-              type="submit"
-              :disabled="loading"
-              class="btn btn-primary"
+          <SubmitButton
           >
             {{ loading ? 'Создание...' : 'Создать' }}
-          </button>
+          </SubmitButton>
         </div>
       </form>
     </div>
@@ -46,10 +42,88 @@
 </template>
 
 <script>
-
 import router from "@/router/index.js";
+import {projectAdminService} from "@/services/ProjectAdminService.js";
+import {userAdminService} from "@/services/UserAdminService.js";
+import Input from "@/components/ui/Input.vue";
+import Textarea from "@/components/ui/Textarea.vue"
+import SubmitButton from "@/components/ui/SubmitButton.vue";
+import Select from "@/components/ui/Select.vue";
 
 export default {
+  data() {
+    return {
+      form: {
+        name: '',
+        description: '',
+        developers: [],
+      },
+      users: [],
+      loading: false,
+      loadingUsers: false,
+    }
+  },
+
+  methods: {
+    async submitForm() {
+      this.loading = true
+      try {
+        if (!this.validateForm()) {
+          return;
+        }
+        const response = await projectAdminService.createProject({
+          name: this.form.name,
+          description: this.form.description
+        })
+
+        if(response.success){
+          for(const developer of this.form.developers){
+            const assign = await projectAdminService.assignDeveloper({
+              projectId: response.data.id,
+              userId: developer
+            })
+          }
+        }
+
+        this.$emit('success', response.data)
+
+        this.close()
+      } catch (error) {
+        console.error('Error creating project:', error)
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async handleLoadDevelopers(){
+      this.loadingUsers = true
+      try {
+        const response = await userAdminService.getAllUsers()
+        if (response.success) {
+          this.users = response.data;
+        }
+      } catch (error) {
+        console.error('Error loading users:', error)
+      } finally {
+        this.loadingUsers = false
+      }
+    },
+
+    validateForm(){
+      const fields = this.$refs
+      let isValid = true
+
+      Object.values(fields).forEach(field => {
+        if (!field.isValid()) {
+          isValid = false
+        }
+      })
+
+      return isValid
+    }
+  },
+
+  components: {Select, SubmitButton, Input, Textarea},
   emits: ['close', 'success'],
 
   setup(props, { emit }) {
@@ -70,45 +144,16 @@ export default {
     }
   },
 
-  data() {
-    return {
-      form: {
-        name: '',
-        description: ''
-      },
-      loading: false
-    }
-  },
-
-  methods: {
-    async submitForm() {
-      this.loading = true
-      try {
-        // Логика создания проекта
-        const response = await apiClient.post('/projects', this.form)
-
-        this.$emit('success', response.data)
-
-        // Автоматическое закрытие после успеха
-        this.close()
-      } catch (error) {
-        console.error('Error creating project:', error)
-      } finally {
-        this.loading = false
-      }
-    }
-  },
-
-  // Закрытие по ESC
   mounted() {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
         this.close()
       }
     }
-
     document.addEventListener('keydown', handleEscape)
-  }
+
+    this.handleLoadDevelopers()
+  },
 }
 </script>
 

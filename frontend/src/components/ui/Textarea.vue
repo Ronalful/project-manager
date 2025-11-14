@@ -1,17 +1,11 @@
-<script setup>
-
-</script>
-
 <template>
   <div class="form-group">
-    <input
+    <textarea
         :id="id"
-        :type="inputType"
         :value="modelValue"
         :placeholder="placeholder"
         :required="required"
         :disabled="disabled"
-        :maxlength="maxlength"
         @input="handleInput"
         @blur="handleBlur"
         @focus="handleFocus"
@@ -26,18 +20,11 @@
 
 <script>
 export default {
-  name: 'Input',
+  name: 'Textarea',
   props: {
     modelValue: {
       type: [String, Number],
       default: ''
-    },
-    type: {
-      type: String,
-      default: 'text',
-      validator: (value) => [
-        'text', 'email', 'password', 'tel', 'number', 'url'
-      ].includes(value)
     },
     placeholder: {
       type: String,
@@ -55,10 +42,6 @@ export default {
       type: String,
       default: () => `field-${Math.random().toString(36).substr(2, 9)}`
     },
-    maxlength: {
-      type: Number,
-      default: null
-    },
   },
   emits: ['update:modelValue', 'blur', 'focus'],
   data() {
@@ -68,10 +51,6 @@ export default {
     }
   },
   computed: {
-    inputType() {
-      if (this.type === 'password') return 'password'
-      return this.type
-    },
     inputClasses() {
       return {
         'form-field__input--error': this.error,
@@ -102,58 +81,12 @@ export default {
     validate(value) {
       this.error = ''
 
-      if (this.required && !value.trim()) {
+      if (this.required && !value) {
         this.error = 'Это поле обязательно для заполнения'
         return false
       }
 
-      if (value && !this.validateByType(value)) {
-        return false
-      }
-
       return true
-    },
-
-    validateByType(value) {
-      const validators = {
-        email: (val) => {
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-          if (!emailRegex.test(val)) {
-            this.error = 'Введите корректный email адрес'
-            return false
-          }
-          return true
-        },
-
-        /*password: (val) => {
-          if (val.length < 6) {
-            this.error = 'Пароль должен содержать минимум 6 символов'
-            return false
-          }
-          return true
-        },*/
-
-        tel: (val) => {
-          const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,}$/
-          if (!phoneRegex.test(val.replace(/\s/g, ''))) {
-            this.error = 'Введите корректный номер телефона'
-            return false
-          }
-          return true
-        },
-
-        url: (val) => {
-          try {
-            new URL(val)
-            return true
-          } catch {
-            this.error = 'Введите корректный URL'
-            return false
-          }
-        }
-      }
-
-      return validators[this.type] ? validators[this.type](value) : true
     },
 
     isValid() {

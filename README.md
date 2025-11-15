@@ -73,6 +73,15 @@ sudo docker-compose up -d
 ```sh
 sudo docker-compose down
 ```
+Снести docker:
+```sh
+sudo docker-compose down -v
+```
+Перезапустить docker:
+```sh
+sudo docker-compose up -d --build
+```
+
 # Архитектура
 
 - Java 17

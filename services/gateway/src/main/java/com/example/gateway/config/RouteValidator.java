@@ -42,16 +42,17 @@ public class RouteValidator {
 
     private static final Map<String, List<String>> roleBasedEndpoints = Map.of(
             "ADMIN", List.of(
+                    "/api/v1/all/**",
                     "/api/v1/admin/**",
                     "/api/v1/project-assignments/**",
                     "/api/v1/task-assignments/**",
-
                     "/api/v1/auth/**"
             ),
             "USER", List.of(
+                    "/api/v1/all/**",
                     "/api/v1/user/**",
-
-                    "/api/v1/auth/**"
+                    "/api/v1/auth/**",
+                    "/api/v1/users/**"
             )
     );
 

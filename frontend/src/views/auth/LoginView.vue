@@ -1,5 +1,8 @@
 <script setup>
 import '../../assets/styles/main.css'
+import SubmitButton from "@/components/ui/SubmitButton.vue";
+import GotoLink from "@/components/ui/GotoLink.vue";
+import Input from "@/components/ui/Input.vue";
 </script>
 
 <template>
@@ -11,45 +14,30 @@ import '../../assets/styles/main.css'
         </h1>
         <h2 class="login-second-title">Давайте начнём!</h2>
       </div>
-      <form @submit.prevent="handleLogin">
+      <form @submit.prevent="handleLogin" novalidate>
         <p v-if="errors.incorrect" class="error title">{{ errors.incorrect }}</p>
         <p v-if="errors.others" class="error title">{{ errors.others }}</p>
         <div class="login-form-group-container">
-          <div class="login-form-group">
-            <input
-                class="field"
-                id="email"
-                v-model="formData.email"
-                type="text"
-                placeholder="Email"/>
-            <p v-if="errors.email" class="error">{{ errors.email }}</p>
-          </div>
+          <Input
+              ref="emailField"
+              v-model="formData.email"
+              type="email"
+              placeholder="Email"
+              required
+          ></Input>
 
-          <div class="login-form-group">
-            <input
-                class="field"
-                id="password"
-                v-model="formData.password"
-                type="password"
-                placeholder="Пароль"
-            />
-            <p v-if="errors.password" class="error">{{ errors.password }}</p>
-          </div>
+          <Input
+              ref="passwordField"
+              v-model="formData.password"
+              type="password"
+              placeholder="Пароль"
+              required
+          ></Input>
 
-          <button
-              class="submit-button"
-              type="submit"
-          >
-            Войти
-          </button>
+        <SubmitButton>Войти</SubmitButton>
 
-          <a
-              class="forgot-button"
-              href="login/forgot"
-              type="button"
-          >
-            Не помню пароль
-          </a>
+        <GotoLink href="login/forgot">Не помню пароль</GotoLink>
+
         </div>
 
       </form>
@@ -58,7 +46,8 @@ import '../../assets/styles/main.css'
 </template>
 
 <script>
-import {authService} from '@/services/auth'
+import {authService} from '@/services/AuthService.js'
+
 export default {
   data() {
     return {
@@ -73,58 +62,37 @@ export default {
     async handleLogin() {
       this.errors = {}
 
-      if (!this.validateEmail() || !this.validatePassword()) {
+      if (!this.validateForm()) {
         return;
       }
 
-      try {
-        const response = await authService.login({
-          email: this.formData.email,
-          password: this.formData.password
-        })
-      } catch (error){
-        if (!error.requiresActivation) {
-          if(!error.incorrectLoginPassword){
-            this.errors.incorrect = 'Неверный логин или пароль';
-          }
-          else{
-            console.error('Login error:', error)
-            this.errors.others = error.response?.data?.message || 'Ошибка входа'
-          }
+      const response = await authService.login({
+        email: this.formData.email,
+        password: this.formData.password
+      })
+      if (!response.requiresActivation) {
+        if (response.incorrectLoginPassword) {
+          this.errors.incorrect = 'Неверный логин или пароль';
+        } else if(response.passwordExpired){
+          this.errors.incorrect = 'Этот пароль недействителен. Пожалуйста, установите новый через операцию сброса пароля.';
+        } else {
+          this.errors.others = response?.data?.message || 'Ошибка входа'
         }
       }
     },
 
-    validateEmail() {
-      const emailField = document.getElementById('email');
+    validateForm(){
+      const fields = this.$refs
+      let isValid = true
 
-      if (!this.formData.email) {
-        this.errors.email = 'Введите email';
-        emailField.classList.add('field-error');
-        return false;
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.formData.email)) {
-        emailField.classList.add('field-error');
-        this.errors.email = 'Введите корректный email';
-        return false;
-      } else {
-        emailField.classList.remove('field-error');
-        return true;
-      }
-    },
+      Object.values(fields).forEach(field => {
+          if (!field.isValid()) {
+            isValid = false
+          }
+      })
 
-    validatePassword() {
-      const passwordField = document.getElementById('password');
-
-      if (!this.formData.password) {
-        this.errors.password = 'Введите пароль';
-        passwordField.classList.add('field-error');
-        return false;
-      } else {
-        passwordField.classList.remove('field-error');
-        return true;
-      }
-    },
-
+      return isValid
+    }
   }
 }
 </script>

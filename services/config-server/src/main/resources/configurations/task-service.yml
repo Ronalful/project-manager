@@ -19,11 +19,12 @@ spring:
 
 application:
   config:
-    developer-url: http://developer-service:8080/api/v1/developers
-    project-url: http://project-service:8080/api/v1/projects
+    user-url: http://auth-service:8080/api/v1/admin/users
+    admin-project-url: http://project-service:8080/api/v1/admin/projects
+    user-project-url: http://project-service:8080/api/v1/user/projects
 
 springdoc:
   swagger-ui:
-    path: "/api/v1/tasks/swagger-ui.html"
+    path: "/api/v1/doc/tasks/swagger-ui.html"
   api-docs:
-    path: "/api/v1/tasks/v3/api-docs"
+    path: "/api/v1/doc/tasks/v3/api-docs"

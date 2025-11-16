@@ -1,7 +1,7 @@
 package com.example.project.project;
 
-import com.example.project.developer.DeveloperClient;
-import com.example.project.developer.DeveloperResponse;
+import com.example.project.user.UserClient;
+import com.example.project.user.UserResponse;
 import com.example.project.projectAssignment.ProjectAssignment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProjectMapper {
 
-    private final DeveloperClient developerClient;
+    private final UserClient userClient;
 
     public Project toProject(ProjectRequest request) {
         return Project.builder()
@@ -32,7 +32,7 @@ public class ProjectMapper {
         );
     }
 
-    private List<DeveloperResponse> findAllDevelopersInProject(Project project) {
+    private List<UserResponse> findAllDevelopersInProject(Project project) {
         if (project.getAssignments() == null) {
             return new ArrayList<>();
         }
@@ -44,9 +44,9 @@ public class ProjectMapper {
                 .toList();
     }
 
-    private Optional<DeveloperResponse> findDeveloperInAssignment(ProjectAssignment projectAssignment) {
+    private Optional<UserResponse> findDeveloperInAssignment(ProjectAssignment projectAssignment) {
         try {
-            return developerClient.getDeveloperById(projectAssignment.getDeveloperId());
+            return userClient.getUserById(projectAssignment.getUserId());
         }
         catch (Exception e) {
             return Optional.empty();

@@ -1,8 +1,8 @@
 package com.example.task.task;
 
-import com.example.task.developer.DeveloperClient;
-import com.example.task.developer.DeveloperResponse;
-import com.example.task.project.ProjectClient;
+import com.example.task.developer.UserClient;
+import com.example.task.developer.UserResponse;
+import com.example.task.project.AdminProjectClient;
 import com.example.task.project.ProjectResponse;
 import com.example.task.taskAssignment.TaskAssignment;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TaskMapper {
 
-    private final DeveloperClient developerClient;
-    private final ProjectClient projectClient;
+    private final UserClient userClient;
+    private final AdminProjectClient adminProjectClient;
 
     public Task toTask(TaskRequest request) {
         Task task = Task.builder()
@@ -51,7 +51,7 @@ public class TaskMapper {
 
     }
 
-    private List<DeveloperResponse> findAllDevelopersInTask(Task task) {
+    private List<UserResponse> findAllDevelopersInTask(Task task) {
         if (task.getAssignments() == null) {
             return new ArrayList<>();
         }
@@ -63,9 +63,9 @@ public class TaskMapper {
                 .toList();
     }
 
-    private Optional<DeveloperResponse> findDeveloperInAssignment(TaskAssignment projectAssignment) {
+    private Optional<UserResponse> findDeveloperInAssignment(TaskAssignment projectAssignment) {
         try {
-            return developerClient.getDeveloperById(projectAssignment.getDeveloperId());
+            return userClient.getUserById(projectAssignment.getUserId());
         }
         catch (Exception e) {
             return Optional.empty();
@@ -73,6 +73,6 @@ public class TaskMapper {
     }
 
     private ProjectResponse findProjectInTask(Task task) {
-        return projectClient.getProjectById(task.getProjectId()).get();
+        return adminProjectClient.getProjectById(task.getProjectId()).get();
     }
 }

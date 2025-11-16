@@ -4,13 +4,15 @@ html {
     --additional-color: rgb(27,229,172);
     --error-background: rgb(255, 189, 189);
     --error-text: rgb(255, 61, 61);
-    --background: #fffde7;
+    --background: #ffffff;
     --background2: #fff;
     --shadow: #ddd;
     --field: #f5f5f5;
     --gray2: #ccc;
+    --background3: #dadada;
     --font-main: #000000;
     --font-additional: rgb(133, 133, 133);
-    --theme-icon-sun: url(../img/icon-sun-light.png);
-    --theme-icon-moon: url(../img/icon-moon-light.png);
+    --svg-icon-color: #000;
+    --disabled: #f8f9fa;
+    --border: #707070;
 }

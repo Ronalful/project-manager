@@ -1,6 +1,6 @@
 package com.example.auth.service;
 
-import com.example.auth.dto.*;
+import com.example.auth.dto.auth.*;
 import com.example.auth.entity.token.Token;
 import com.example.auth.entity.user.User;
 import com.example.auth.exception.AuthException;
@@ -177,11 +177,6 @@ public class AuthenticationService {
             throw new AuthException("Invalid access token");
         }
         revokeAllUserTokens(token.get().user);
-    }
-
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     public Boolean isTokenValid(String token) {

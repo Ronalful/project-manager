@@ -1,9 +1,9 @@
 package com.example.auth.controller;
 
-import com.example.auth.dto.*;
-import com.example.auth.entity.user.User;
+import com.example.auth.dto.auth.*;
 import com.example.auth.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,6 +41,7 @@ public class AuthenticationController {
     )
     @PostMapping("/confirm-activation")
     public ResponseEntity<?> confirmActivation(
+            @Parameter(hidden = true)
             @RequestHeader("X-User-Email") String userEmail,
             @RequestBody @Valid ActivationRequest request
     ) {
@@ -63,6 +64,7 @@ public class AuthenticationController {
     )
     @PostMapping("/confirm-reset-password")
     public ResponseEntity<?> confirmResetPassword(
+            @Parameter(hidden = true)
             @RequestHeader("X-User-Email") String userEmail,
             @RequestBody @Valid ResetPasswordRequest request
     ) {
@@ -107,13 +109,7 @@ public class AuthenticationController {
         return ResponseEntity.accepted().build();
     }
 
-    @Operation(
-            summary = "Получить пользователя по email"
-    )
-    @GetMapping("/user/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        return ResponseEntity.ok(service.getUserByEmail(email));
-    }
+
 
     @Operation(
             summary = "Проверка валидности jwt токена"

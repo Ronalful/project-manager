@@ -1,50 +1,69 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import HomeView from "@/views/HomeView.vue";
+import {tokenService} from "@/services/TokenService.js"
+import authRouters from "./auth.js"
+import adminRouters from "./admin.js"
+import defaultRouters from "./default.js"
+import NotFoundView from "@/views/NotFoundView.vue";
+import {useUserStore} from "@/stores/user.js";
 
 const routes = [
+        ...authRouters,
+        ...adminRouters,
+        ...defaultRouters,
     {
-        path: '/',
-        name: 'Home',
-        component: HomeView // тут будет основной шаблон
-    },
-    {
-        path: '/login',
-        component: () => import('@/views/auth/AuthLayout.vue'),
-        children: [
-            {
-                path: '',
-                name: 'Login',
-                component: () => import('@/views/auth/LoginView.vue'),
-            },
-            {
-                path: 'forgot',
-                name: 'ForgotPassword',
-                component: () => import('@/views/auth/ForgotView.vue'),
-            },
-            {
-                path: 'activate',
-                name: 'AccountActivation',
-                component: () => import('@/views/auth/ActivateView.vue'),
-                meta: { requiresActivationToken: true },
-            },
-        ]
-    },
-
+        path: '/:catchAll(.*)',  // Ловит любой путь, какой не был ранее объявлен
+        name: 'NotFound',
+        component: NotFoundView
+    }
 ]
 
 const router = createRouter({
-    history: createWebHistory(), // Используем HTML5 history API
+    history: createWebHistory(),
     routes: routes
 })
 
-router.beforeEach((to, from, next) => {
-    if (to.meta.requiresActivationToken) {
-        const hasToken = sessionStorage.getItem('activation_token')
-        if (!hasToken) {
-            next({ name: 'Login' })
+router.beforeEach(async(to, from, next) => {
+    const isAuthenticated = tokenService.isAuthenticated()
+    const isUsingTempTokens = tokenService.isUsingTempTokens()
+
+    if (to.meta.requiresActivationToken){
+        if(isAuthenticated){
+            next({name: 'Home'})
+            return
+        }
+        else{
+            if (!isUsingTempTokens){
+                next({name: 'Login'})
+                return
+            }
+        }
+    }
+
+    if (to.meta.requiresAuth){
+        if(!isAuthenticated) {
+            next({
+                name: 'Login',
+                query: {redirect: to.fullPath}
+            })
             return
         }
     }
+
+    if (to.meta.requiresGuest) {
+        if (isAuthenticated) {
+            next({name: 'Home'})
+            return
+        }
+    }
+
+    if(to.meta.requiresAdmin){
+        const userStore = useUserStore()
+        if(!userStore.isAdmin){
+            // что-нибудь придумать для доступа
+            return
+        }
+    }
+
     next()
 })
 

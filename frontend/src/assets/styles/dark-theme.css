@@ -9,8 +9,10 @@ html[data-theme='dark'] {
     --shadow: #ddd;
     --field: #878787;
     --gray2: #ccc;
+    --background3: #303985;
     --font-main: #fff;
     --font-additional: rgb(228, 228, 228);
-    --theme-icon-sun: url(../img/icon-sun-dark.png);
-    --theme-icon-moon: url(../img/icon-moon-dark.png);
+    --svg-icon-color: #fff;
+    --disabled: #f8f9fa;
+    --border: #d5d5d5;
 }

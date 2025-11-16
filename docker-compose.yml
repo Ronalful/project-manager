@@ -2,8 +2,8 @@ services:
   config-service:
     build:
       context: ./services/config-server
-    ports:
-      - "8888:8080"
+    expose:
+      - "8080"
     networks:
       - microservices-net
 
@@ -15,23 +15,11 @@ services:
     networks:
       - microservices-net
 
-  developer-service:
-    build:
-      context: ./services/developer
-    ports:
-      - "8010:8080"
-    environment:
-      - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
-      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
-      - POSTGRESQL_PORT=${POSTGRESQL_PORT}
-    networks:
-      - microservices-net
-
   project-service:
     build:
       context: ./services/project
-    ports:
-      - "8020:8080"
+    expose:
+      - "8080"
     environment:
       - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
@@ -42,8 +30,8 @@ services:
   task-service:
     build:
       context: ./services/task
-    ports:
-      - "8030:8080"
+    expose:
+      - "8080"
     environment:
       - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
@@ -54,8 +42,8 @@ services:
   notification-service:
     build:
       context: ./services/notification
-    ports:
-      - "8040:8080"
+    expose:
+      - "8080"
     environment:
       - MONGODB_LOGIN=${MONGODB_LOGIN}
       - MONGODB_PASSWORD=${MONGODB_PASSWORD}
@@ -66,8 +54,8 @@ services:
   auth-service:
     build:
       context: ./services/auth
-    ports:
-      - "8050:8080"
+    expose:
+      - "8080"
     environment:
       - POSTGRESQL_LOGIN=${POSTGRESQL_LOGIN}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}

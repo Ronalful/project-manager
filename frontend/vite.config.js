@@ -23,6 +23,18 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/auth-api/, '/api/v1/auth'),
       },
+      '/admin':{
+        target: 'http://localhost:8222',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/admin/, '/api/v1/admin'),
+      },
+      '/project-assignments':{
+        target: 'http://localhost:8222',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/project-assignments/, '/api/v1/project-assignments'),
+      }
     },
   }
 })

@@ -1,9 +1,9 @@
 package com.example.project.kafka;
 
-import com.example.project.developer.DeveloperResponse;
+import com.example.project.user.UserResponse;
 
 public record ProjectNotification(
-        DeveloperResponse developer,
+        UserResponse user,
         String projectName,
         ProjectOperation operation
 ) {

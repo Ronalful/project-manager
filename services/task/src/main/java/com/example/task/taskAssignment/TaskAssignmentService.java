@@ -1,12 +1,12 @@
 package com.example.task.taskAssignment;
 
-import com.example.task.developer.DeveloperClient;
-import com.example.task.developer.DeveloperResponse;
+import com.example.task.developer.UserClient;
+import com.example.task.developer.UserResponse;
 import com.example.task.exception.*;
 import com.example.task.kafka.TaskNotification;
 import com.example.task.kafka.TaskOperation;
 import com.example.task.kafka.TaskProducer;
-import com.example.task.project.ProjectClient;
+import com.example.task.project.AdminProjectClient;
 import com.example.task.project.ProjectResponse;
 import com.example.task.project.ProjectWithDevelopersResponse;
 import com.example.task.task.Task;
@@ -21,17 +21,17 @@ public class TaskAssignmentService {
 
     private final TaskRepository taskRepository;
     private final TaskAssignmentRepository taskAssignmentRepository;
-    private final DeveloperClient developerClient;
-    private final ProjectClient projectClient;
+    private final UserClient userClient;
+    private final AdminProjectClient adminProjectClient;
     private final TaskProducer taskProducer;
 
     @Transactional
     public void assignDeveloper(TaskAssignmentRequest request) {
-        var developer = developerClient.getDeveloperById(request.developerId())
+        var developer = userClient.getUserById(request.developerId())
                 .orElseThrow(() -> new DeveloperNotFoundException("Developer not found with id " + request.developerId()));
         var task = taskRepository.findById(request.taskId())
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with id " + request.taskId()));
-        var project = projectClient.getProjectByIdWithDevelopers(task.getProjectId())
+        var project = adminProjectClient.getProjectByIdWithDevelopers(task.getProjectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project not found with id " + task.getProjectId()));
 
         if (isDeveloperInProject(request.developerId(), project)) {
@@ -46,7 +46,7 @@ public class TaskAssignmentService {
 
         taskAssignmentRepository.save(TaskAssignment.builder()
                 .task(task)
-                .developerId(developer.id())
+                .userId(developer.id())
                 .build());
     }
 
@@ -58,11 +58,11 @@ public class TaskAssignmentService {
     }
 
     private boolean isDeveloperAssignedToTask(Integer developerId, Task task) {
-        return taskAssignmentRepository.findByTaskAndDeveloperId(task, developerId)
+        return taskAssignmentRepository.findByTaskAndUserId(task, developerId)
                 .isPresent();
     }
 
-    private void sendDeveloperAssignedToTaskInProjectNotification(DeveloperResponse developer, Task task,
+    private void sendDeveloperAssignedToTaskInProjectNotification(UserResponse developer, Task task,
                                                                   ProjectResponse project) {
         taskProducer.send(new TaskNotification(
                 developer,
@@ -72,8 +72,8 @@ public class TaskAssignmentService {
         ));
     }
 
-    private void sendDeveloperUnassignedToTaskInProjectNotification(DeveloperResponse developer, Task task,
-                                                                  ProjectResponse project) {
+    private void sendDeveloperUnassignedToTaskInProjectNotification(UserResponse developer, Task task,
+                                                                    ProjectResponse project) {
         taskProducer.send(new TaskNotification(
                 developer,
                 task.getTitle(),
@@ -83,11 +83,11 @@ public class TaskAssignmentService {
     }
     @Transactional
     public void unassignDeveloper(TaskAssignmentRequest request) {
-        var developer = developerClient.getDeveloperById(request.developerId())
+        var developer = userClient.getUserById(request.developerId())
                 .orElseThrow(() -> new DeveloperNotFoundException("Developer not found with id " + request.developerId()));
         var task = taskRepository.findById(request.taskId())
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with id " + request.taskId()));
-        var project = projectClient.getProjectByIdWithDevelopers(task.getProjectId())
+        var project = adminProjectClient.getProjectByIdWithDevelopers(task.getProjectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project not found with id " + task.getProjectId()));
 
         if(!isDeveloperAssignedToTask(request.developerId(), task)) {
@@ -96,7 +96,7 @@ public class TaskAssignmentService {
 
         sendDeveloperUnassignedToTaskInProjectNotification(developer, task, project.toProjectResponse());
 
-        taskAssignmentRepository.deleteByTaskAndDeveloperId(task, request.developerId());
+        taskAssignmentRepository.deleteByTaskAndUserId(task, request.developerId());
     }
 }
 

@@ -27,7 +27,7 @@ export default {
     };
   },
   methods: {
-    async handleLoadProject() {
+    async handleLoadProjects() {
       this.loading = true
       try {
         const response = await projectAdminService.getAllProjects()
@@ -42,7 +42,7 @@ export default {
     },
   },
   mounted() {
-    this.handleLoadProject();
+    this.handleLoadProjects();
   },
 }
 </script>

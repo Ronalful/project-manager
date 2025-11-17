@@ -12,7 +12,7 @@
           <router-link
               class="project-link"
               :to="{
-                name: 'ProjectDetail',
+                name: 'ProjectEdit',
                 params: { id: this.project?.id }}"
           >
             {{ project.name }}

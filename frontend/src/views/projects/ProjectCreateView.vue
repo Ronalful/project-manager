@@ -1,13 +1,18 @@
 <template>
-  <BaseModal :title="this.title" :backto="this.backto" :open="true">
+  <BaseModal :backto="backto" :open="true">
+    <template #header>
+      <h2>Добавить проект</h2>
+    </template>
+
+    <template #main>
       <form @submit.prevent="submitForm" class="modal-body" novalidate>
-          <Input
-              ref="nameField"
-              v-model="form.name"
-              type="text"
-              placeholder="Название проекта"
-              required
-          ></Input>
+        <Input
+            ref="nameField"
+            v-model="form.name"
+            type="text"
+            placeholder="Название проекта"
+            required
+        />
 
         <MultiSelect
             v-model="form.developers"
@@ -15,22 +20,18 @@
             placeholder="Назначить разработчиков..."
         />
 
-          <Textarea
+        <Textarea
             ref="descriptionField"
             v-model="form.description"
             placeholder="Описание проекта"
             required
-            >
-          </Textarea>
+        />
 
-
-        <div class="form-actions">
-          <SubmitButton
-          >
+          <SubmitButton>
             {{ loading ? 'Создание...' : 'Создать' }}
           </SubmitButton>
-        </div>
       </form>
+    </template>
   </BaseModal>
 </template>
 
@@ -47,7 +48,6 @@ import MultiSelect from "@/components/ui/MultiSelect.vue";
 export default {
   data() {
     return {
-      title: "Добавить проект",
       backto: "/projects",
       form: {
         name: '',
@@ -150,7 +150,11 @@ export default {
       return isValid
     }
   },
-  components: {BaseModal, Multiselect, SubmitButton, Input, Textarea},
+  components: {BaseModal, MultiSelect, SubmitButton, Input, Textarea},
+
+  mounted() {
+    this.handleLoadDevelopers()
+  }
 }
 </script>
 

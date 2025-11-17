@@ -1,80 +1,73 @@
 <template>
-  <div class="modal-overlay" @click.self="close">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="project-title">{{ project.name }}</h2>
-        <button @click="close" class="close-btn">&times;</button>
+  <BaseModal :backto="backto" :open="true">
+    <template #header>
+      <h2>{{ project.name }}</h2>
+    </template>
+
+    <template #main>
+      <div class="description-section">
+        <h3 class="section-title">Описание проекта</h3>
+        <p class="project-description">{{ project.description }}</p>
       </div>
 
-      <div class="modal-body">
-        <div class="description-section">
-          <h3 class="section-title">Описание проекта</h3>
-          <p class="project-description">{{ project.description }}</p>
-        </div>
-
-        <div class="developers-section">
-          <h3 class="section-title">Команда разработки</h3>
-          <div class="developers-grid">
-            <div
-                v-for="developer in project.developers"
-                :key="developer.id"
-                class="developer-card"
-            >
-              <div class="developer-avatar">
-                {{ getInitials(developer.firstname, developer.lastname) }}
-              </div>
-              <div class="developer-info">
-                <h4 class="developer-name">
-                  {{ developer.firstname }} {{ developer.lastname }}
-                </h4>
-                <p class="developer-email">{{ developer.email }}</p>
-              </div>
+      <div class="developers-section">
+        <h3 class="section-title">Команда разработки</h3>
+        <div class="developers-grid">
+          <div
+              v-for="developer in project.developers"
+              :key="developer.id"
+              class="developer-card"
+          >
+            <div class="developer-avatar">
+              {{ getInitials(developer.firstname, developer.lastname) }}
+            </div>
+            <div class="developer-info">
+              <h4 class="developer-name">
+                {{ developer.firstname }} {{ developer.lastname }}
+              </h4>
+              <p class="developer-email">{{ developer.email }}</p>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </BaseModal>
 </template>
 
 <script>
-import router from "@/router/index.js";
-import {projectAdminService} from "@/services/ProjectAdminService.js";
 import {userAdminService} from "@/services/UserAdminService.js";
-import Input from "@/components/ui/Input.vue";
-import Textarea from "@/components/ui/Textarea.vue"
-import SubmitButton from "@/components/ui/SubmitButton.vue";
-import Select from "@/components/ui/Select.vue";
 import {projectUserService} from "@/services/ProjectUserService.js";
-import {compile} from "vue";
+import BaseModal from "@/components/BaseModal.vue";
 
 export default {
+  components: {BaseModal},
   data() {
     return {
+      backto: '/projects',
       projectId: '',
       project: {
         name: 'Project',
         description: 'проект балванка',
-        developers: [{
-          id: '1',
-          firstname: 'Ivan',
-          lastname: 'Ivanov',
-          email: 'ivanov@gmail.com'
-        }
+        developers: [
+          {
+            id: '1',
+            firstname: 'Ivan',
+            lastname: 'Ivanov',
+            email: 'ivanov@gmail.com'
+          },
+          {
+            id: '2',
+            firstname: 'Elen',
+            lastname: 'Sergeeva',
+            email: 'sergeeva@gmail.com'
+          },
         ],
       }
     }
   },
   mounted() {
-    // запрос в бэк
-    this.projectId = this.$route.params.id;
 
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') {
-        this.close()
-      }
-    }
-    document.addEventListener('keydown', handleEscape)
+    this.projectId = this.$route.params.id;
 
     this.handleLoadProject()
     this.handleLoadDevelopers()
@@ -93,7 +86,7 @@ export default {
         this.loading = false
       }
     },
-    async handleLoadDevelopers(){
+    async handleLoadDevelopers() {
       this.loadingUsers = true
       try {
         const response = await userAdminService.getAllUsers()
@@ -122,106 +115,10 @@ export default {
       return `${firstname.charAt(0)}${lastname.charAt(0)}`.toUpperCase();
     },
   },
-
-  components: {
-    Select, SubmitButton, Input, Textarea
-  },
-
-  emits: ['close', 'success'],
-
-  setup(props, {emit}) {
-
-    const close = () => {
-      // Закрываем модалку через эмит или роутер
-      emit('close')
-      // Или через роутер
-      if (window.history.length > 1) {
-        router.back()
-      } else {
-        router.push('/projects')
-      }
-    }
-
-    return {
-      close
-    }
-  }
 }
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.modal-content {
-  background: var(--background2);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  max-width: 600px;
-  width: 100%;
-  max-height: 90vh;
-  overflow: hidden;
-  animation: modalAppear 0.3s ease-out;
-}
-
-@keyframes modalAppear {
-  from {
-    opacity: 0;
-    transform: scale(0.9) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-/* Заголовок */
-.modal-header {
-  padding: 24px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-}
-
-.project-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--font-main);
-  margin: 0;
-  flex: 1;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--font-main);
-}
-
-.modal-body {
-  padding: 24px;
-  overflow-y: auto;
-  max-height: calc(90vh - 100px);
-}
-
 .section-title {
   font-size: 1.1rem;
   font-weight: 600;
@@ -302,15 +199,6 @@ export default {
 }
 
 @media (max-width: 640px) {
-  .modal-content {
-    margin: 10px;
-    max-width: none;
-  }
-
-  .modal-body {
-    padding: 20px;
-  }
-
   .developer-card {
     padding: 12px;
   }

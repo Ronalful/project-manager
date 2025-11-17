@@ -2,14 +2,16 @@
   <div class="modal-overlay" @click.self="close">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>{{ title }}</h2>
+        <div class="modal-title">
+          <slot name="header"></slot>
+        </div>
         <button @click="close" class="close-btn">&times;</button>
       </div>
-      <div class="modal-main">
-        <slot></slot>
+      <div class="modal-body">
+        <slot name="main"></slot>
       </div>
       <div class="modal-footer">
-
+        <slot name="footer"></slot>
       </div>
     </div>
   </div>
@@ -29,10 +31,6 @@ export default {
     open: {
       type: Boolean,
       default: false,
-    },
-    title: {
-      type: String,
-      default: ''
     },
     backto: {
       type: String,
@@ -59,8 +57,6 @@ export default {
       }
     }
     document.addEventListener('keydown', handleEscape)
-
-    this.handleLoadDevelopers()
   },
 }
 </script>
@@ -72,31 +68,49 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: 20px;
 }
 
 .modal-content {
-  background: white;
+  background: var(--background2);
   padding: 20px;
-  border-radius: 8px;
-  max-width: 500px;
-  width: 90%;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px var(--shadow);
+  animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .modal-header {
+  padding: 24px;
+  border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eee;
+}
+
+.modal-title {
+  color: var(--font-main);
 }
 
 .close-btn {
@@ -110,5 +124,23 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--font-main);
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  max-height: calc(90vh - 100px);
+}
+
+@media (max-width: 640px) {
+  .modal-content {
+    margin: 10px;
+    max-width: none;
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
 }
 </style>

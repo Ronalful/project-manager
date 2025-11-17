@@ -1,7 +1,6 @@
 <template>
   <div class="modal-overlay" @click.self="close">
     <div class="modal-content">
-      <!-- Заголовок -->
       <div class="modal-header">
         <h2 class="project-title">Проект #{{ projectId }}</h2>
         <button @click="close" class="close-btn">&times;</button>
@@ -34,22 +33,12 @@
 
           <div class="developers-section">
             <h3 class="section-title">Команда разработки</h3>
-            <select
-                id="developers-select"
+            <MultiSelect
                 v-model="project.developers"
-                multiple
-                class="developers-multiselect"
-            >
-              <option
-                  v-for="user in users"
-                  :key="user.id"
-                  :value="user.id"
-                  :selected="isDeveloperSelected(user.id)"
-                  class="select-option"
-              >
-                {{ user.firstname }} {{ user.lastname }} ({{ user.email }})
-              </option>
-            </select>
+                :options="users"
+                placeholder="Назначить разработчиков..."
+            />
+
           </div>
         </div>
         <SubmitButton
@@ -71,17 +60,44 @@ import SubmitButton from "@/components/ui/SubmitButton.vue";
 import Select from "@/components/ui/Select.vue";
 import {projectUserService} from "@/services/ProjectUserService.js";
 import {compile} from "vue";
+import MultiSelect from "@/components/ui/MultiSelect.vue";
 
 export default {
   data() {
     return {
       projectId: '',
       project: {
-        name: '',
-        description: '',
-        developers: [],
+        name: 'Project',
+        description: 'проект балванка',
+        developers: [{
+          id: '1',
+          firstname: 'Ivan',
+          lastname: 'Ivanov',
+          email: 'ivanov@gmail.com'
+        }
+        ],
       },
-      users: [],
+      usersData: [
+        {
+          id: '1',
+          firstname: 'Ivan',
+          lastname: 'Ivanov',
+          email: 'ivanov@gmail.com'
+        },
+        {
+          id: '2',
+          firstname: 'Elen',
+          lastname: 'Sergeeva',
+          email: 'sergeeva@gmail.com'
+        },
+        {
+          id: '3',
+          firstname: 'Kate',
+          lastname: 'Livanova',
+          email: 'livanova@gmail.com'
+        },
+      ],
+      users:[],
     }
   },
   mounted() {
@@ -112,12 +128,15 @@ export default {
         this.loading = false
       }
     },
-    async handleLoadDevelopers(){
+    async handleLoadDevelopers() {
       this.loadingUsers = true
       try {
         const response = await userAdminService.getAllUsers()
         if (response.success) {
-          this.users = response.data;
+          this.prepareUsers(response.data);
+        }
+        else{
+          this.prepareUsers(this.usersData);
         }
       } catch (error) {
         console.error('Error loading users:', error)
@@ -134,6 +153,14 @@ export default {
           firstname: developer.firstname,
           lastname: developer.lastname,
           email: developer.email
+        })
+      }
+    },
+    prepareUsers(data){
+      for (const userData of data){
+        this.users.push({
+          value: userData.id,
+          label: userData.firstname + ' ' + userData.lastname + ' (' + userData.email + ')'
         })
       }
     },
@@ -167,10 +194,10 @@ export default {
         this.loading = false
       }
     },
-    isDeveloperSelected(userId){
+    isDeveloperSelected(userId) {
       return this.project.developers.some(dev => dev.id === userId);
     },
-    validateForm(){
+    validateForm() {
       const fields = this.$refs
       let isValid = true
 
@@ -185,6 +212,7 @@ export default {
   },
 
   components: {
+    MultiSelect,
     Select, SubmitButton, Input, Textarea
   },
 
@@ -248,7 +276,6 @@ export default {
   }
 }
 
-/* Заголовок */
 .modal-header {
   padding: 24px;
   border-bottom: 1px solid var(--border);
@@ -296,72 +323,6 @@ export default {
   margin-bottom: 32px;
 }
 
-.project-description {
-  color: var(--font-main);
-  line-height: 1.6;
-  font-size: 1rem;
-  margin: 0;
-}
-
-/* Разработчики */
-.developers-section {
-  margin-top: 24px;
-}
-
-.developers-grid {
-  display: grid;
-  gap: 16px;
-}
-
-.developer-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  background: var(--background3);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  transition: all 0.2s ease;
-}
-
-.developer-card:hover {
-  background: var(--background2);
-  border-color: var(--border);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.developer-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--main-color) 0%, var(--additional-color) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--font-main);
-  font-weight: 600;
-  font-size: 0.9rem;
-  flex-shrink: 0;
-}
-
-.developer-info {
-  flex: 1;
-}
-
-.developer-name {
-  font-weight: 600;
-  color: var(--font-main);
-  margin: 0 0 4px 0;
-  font-size: 1rem;
-}
-
-.developer-email {
-  color: var(--font-additional);
-  margin: 0;
-  font-size: 0.9rem;
-}
-
 @media (max-width: 640px) {
   .modal-content {
     margin: 10px;
@@ -370,16 +331,6 @@ export default {
 
   .modal-body {
     padding: 20px;
-  }
-
-  .developer-card {
-    padding: 12px;
-  }
-
-  .developer-avatar {
-    width: 40px;
-    height: 40px;
-    font-size: 0.8rem;
   }
 }
 </style>

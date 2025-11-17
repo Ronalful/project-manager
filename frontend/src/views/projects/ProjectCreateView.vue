@@ -7,6 +7,7 @@
       </div>
 
       <form @submit.prevent="submitForm" class="modal-body" novalidate>
+        <div class="modal-body">
           <Input
               ref="nameField"
               v-model="form.name"
@@ -15,11 +16,11 @@
               required
           ></Input>
 
-        <select multiple v-model="form.developers">
-          <option v-for="user in users" :key="user.id" :value="user.id">
-            {{ user.firstname }} {{ user.lastname }} ({{ user.email }})
-          </option>
-        </select>
+        <MultiSelect
+            v-model="form.developers"
+            :options="users"
+            placeholder="Назначить разработчиков..."
+        />
 
           <Textarea
             ref="descriptionField"
@@ -28,6 +29,8 @@
             required
             >
           </Textarea>
+
+          </div>
 
         <div class="form-actions">
           <SubmitButton
@@ -47,7 +50,7 @@ import {userAdminService} from "@/services/UserAdminService.js";
 import Input from "@/components/ui/Input.vue";
 import Textarea from "@/components/ui/Textarea.vue"
 import SubmitButton from "@/components/ui/SubmitButton.vue";
-import Select from "@/components/ui/Select.vue";
+import MultiSelect from "@/components/ui/MultiSelect.vue";
 
 export default {
   data() {
@@ -57,7 +60,27 @@ export default {
         description: '',
         developers: [],
       },
-      users: [],
+      usersData: [
+        {
+          id: '1',
+          firstname: 'Ivan',
+          lastname: 'Ivanov',
+          email: 'ivanov@gmail.com'
+        },
+        {
+          id: '2',
+          firstname: 'Elen',
+          lastname: 'Sergeeva',
+          email: 'sergeeva@gmail.com'
+        },
+        {
+          id: '3',
+          firstname: 'Kate',
+          lastname: 'Livanova',
+          email: 'livanova@gmail.com'
+        },
+      ],
+      users:[],
       loading: false,
       loadingUsers: false,
     }
@@ -99,12 +122,24 @@ export default {
       try {
         const response = await userAdminService.getAllUsers()
         if (response.success) {
-          this.users = response.data;
+          this.prepareUsers(response.data);
+        }
+        else{
+          this.prepareUsers(this.usersData);
         }
       } catch (error) {
         console.error('Error loading users:', error)
       } finally {
         this.loadingUsers = false
+      }
+    },
+
+    prepareUsers(data){
+      for (const userData of data){
+        this.users.push({
+          value: userData.id,
+          label: userData.firstname + ' ' + userData.lastname + ' (' + userData.email + ')'
+        })
       }
     },
 
@@ -122,7 +157,7 @@ export default {
     }
   },
 
-  components: {Select, SubmitButton, Input, Textarea},
+  components: {SubmitButton, Input, Textarea, MultiSelect},
   emits: ['close', 'success'],
 
   setup(props, { emit }) {
@@ -190,6 +225,24 @@ export default {
   border-bottom: 1px solid #eee;
 }
 
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Заголовок */
+.modal-header {
+  padding: 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+}
+
 .close-btn {
   background: none;
   border: none;
@@ -201,10 +254,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.form-group {
-  margin-bottom: 15px;
+  color: var(--font-main);
 }
 
 .form-group label {
@@ -217,7 +267,7 @@ export default {
 .form-group textarea {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
   border-radius: 4px;
   font-size: 14px;
 }
@@ -229,26 +279,4 @@ export default {
   margin-top: 20px;
 }
 
-.btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.btn-primary {
-  background: #007bff;
-  color: white;
-}
-
-.btn-secondary {
-  background: #6c757d;
-  color: white;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
 </style>

@@ -53,9 +53,15 @@ export default {
     return {
       projectId: '',
       project: {
-        name: '',
-        description: '',
-        developers: [],
+        name: 'Project',
+        description: 'проект балванка',
+        developers: [{
+          id: '1',
+          firstname: 'Ivan',
+          lastname: 'Ivanov',
+          email: 'ivanov@gmail.com'
+        }
+        ],
       }
     }
   },

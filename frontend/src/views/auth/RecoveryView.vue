@@ -1,14 +1,8 @@
-<script setup>
-
-import SubmitButton from "@/components/ui/SubmitButton.vue";
-import Input from "@/components/ui/Input.vue";
-</script>
-
 <template>
-  <div class="login-main-container">
-    <form @submit.prevent="handleChangePassword" novalidate>
-      <div class="login-container">
-        <h2 class="login-second-title">Задайте новый пароль</h2>
+  <Container>
+    <template #second-title>Задайте новый пароль</template>
+    <template #content>
+      <form @submit.prevent="handleChangePassword" novalidate>
         <p v-if="errors.incorrect" class="error title">{{ errors.incorrect }}</p>
 
         <Input
@@ -29,18 +23,19 @@ import Input from "@/components/ui/Input.vue";
         ></Input>
 
         <SubmitButton>Сменить пароль</SubmitButton>
-
-      </div>
-    </form>
-  </div>
-
-
+      </form>
+    </template>
+  </Container>
 </template>
 
 <script>
 import {authService} from "@/services/AuthService.js";
+import SubmitButton from "@/components/ui/SubmitButton.vue";
+import Input from "@/components/ui/Input.vue";
+import Container from "@/components/Container.vue";
 
 export default {
+  components: {Container, Input, SubmitButton},
   data() {
     return {
       recoveryFormData: {
@@ -58,7 +53,7 @@ export default {
         const response = await authService.confirmResetPassword({
           password: this.recoveryFormData.password,
         })
-        if(response.error){
+        if (response.error) {
           this.errors.incorrect = 'Непредвиденная ошибка';
         }
       }
@@ -74,7 +69,7 @@ export default {
       }
     },
 
-    validateForm(){
+    validateForm() {
       const fields = this.$refs
       let isValid = true
 

@@ -1,19 +1,15 @@
-<script setup>
-import '../../assets/styles/main.css'
-import SubmitButton from "@/components/ui/SubmitButton.vue";
-import Input from "@/components/ui/Input.vue";
-</script>
-
 <template>
-  <div class="login-main-container">
-    <form @submit.prevent="confirmActivationHandle">
-      <div class="login-container">
-        <h2 class="login-second-title">Осталось совсем чуть-чуть!</h2>
-        <h3 class="login-third-title">Придумайте
-          <a href="#password">новый пароль</a>
-          и
-          <a href="#secret">секретное слово</a>
-          для активации аккаунта</h3>
+  <Container>
+    <template #second-title>Осталось совсем чуть-чуть!</template>
+    <template #third-title>
+      Придумайте
+      <a href="#password">новый пароль</a>
+      и
+      <a href="#secret">секретное слово</a>
+      для активации аккаунта
+    </template>
+    <template #content>
+      <form @submit.prevent="confirmActivationHandle" novalidate>
         <p v-if="errors.others" class="error title">{{ errors.others }}</p>
 
         <Input
@@ -35,16 +31,19 @@ import Input from "@/components/ui/Input.vue";
         ></Input>
 
         <SubmitButton></SubmitButton>
-
-      </div>
-    </form>
-  </div>
+      </form>
+    </template>
+  </Container>
 </template>
 
 <script>
 import {authService} from "@/services/AuthService.js";
+import SubmitButton from "@/components/ui/SubmitButton.vue";
+import Input from "@/components/ui/Input.vue";
+import Container from "@/components/Container.vue";
 
 export default {
+  components: {Container, Input, SubmitButton},
   data() {
     return {
       activationFormData: {
@@ -54,8 +53,8 @@ export default {
       errors: {}
     }
   },
-  methods:{
-    async confirmActivationHandle(){
+  methods: {
+    async confirmActivationHandle() {
       this.errors = {}
 
       if (!this.validateForm()) {
@@ -67,12 +66,12 @@ export default {
           secretPhrase: this.activationFormData.secret,
           password: this.activationFormData.password
         })
-      } catch (error){
+      } catch (error) {
         this.errors.others = error.response?.data?.message || 'Ошибка активации аккаунта. Обратитесь к администратору.'
       }
     },
 
-    validateForm(){
+    validateForm() {
       const fields = this.$refs
       let isValid = true
 

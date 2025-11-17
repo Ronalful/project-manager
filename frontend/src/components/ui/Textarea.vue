@@ -109,7 +109,7 @@ export default {
   margin-bottom: 5px;
 }
 
-.field::placeholder {
+.form-field__input::placeholder {
   color: var(--font-additional);
 }
 

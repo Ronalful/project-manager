@@ -1,46 +1,46 @@
 <script setup>
 import '../../assets/styles/main.css'
-import SubmitButton from "@/components/ui/SubmitButton.vue";
-import Input from "@/components/ui/Input.vue";
+import Container from "@/components/Container.vue";
+
 </script>
 
 <template>
-  <div class="login-main-container recovery">
-    <div class="login-container">
-      <h2 class="login-second-title">Восстановление пароля</h2>
+  <Container>
+    <template #second-title>Восстановление пароля</template>
+    <template #content>
       <form @submit.prevent="handleRecovery" novalidate>
         <p v-if="errors.incorrect" class="error title">{{ errors.incorrect }}</p>
-        <div class="login-form-group-container">
-          <Input
-              ref="emailField"
-              v-model="formData.email"
-              type="email"
-              placeholder="Email"
-              required
-          ></Input>
+        <Input
+            ref="emailField"
+            v-model="formData.email"
+            type="email"
+            placeholder="Email"
+            required
+        ></Input>
 
-          <Input
-              ref="secretField"
-              v-model="formData.secret"
-              type="text"
-              placeholder="Секретное слово"
-              required
-          ></Input>
+        <Input
+            ref="secretField"
+            v-model="formData.secret"
+            type="text"
+            placeholder="Секретное слово"
+            required
+        ></Input>
 
-          <SubmitButton>Восстановить</SubmitButton>
-
-        </div>
+        <SubmitButton>Восстановить</SubmitButton>
 
       </form>
-    </div>
-  </div>
-
+    </template>
+  </Container>
 </template>
 
 <script>
 import {authService} from "@/services/AuthService.js";
+import SubmitButton from "@/components/ui/SubmitButton.vue";
+import Input from "@/components/ui/Input.vue";
+import Container from "@/components/Container.vue";
 
 export default {
+  components: {Container, Input, SubmitButton},
   data() {
     return {
       formData: {
@@ -72,7 +72,7 @@ export default {
       }
     },
 
-    validateForm(){
+    validateForm() {
       const fields = this.$refs
       let isValid = true
 

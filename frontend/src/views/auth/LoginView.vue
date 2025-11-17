@@ -1,19 +1,12 @@
-<script setup>
-import '../../assets/styles/main.css'
-import SubmitButton from "@/components/ui/SubmitButton.vue";
-import GotoLink from "@/components/ui/GotoLink.vue";
-import Input from "@/components/ui/Input.vue";
-</script>
-
 <template>
-  <div class="login-main-container">
-    <div class="login-container">
-      <div class="login-titles">
-        <h1 class="login-first-title">
-          <img class="logo-image login" src="../../assets/img/logo.png">
-        </h1>
-        <h2 class="login-second-title">Давайте начнём!</h2>
-      </div>
+  <Container>
+    <template #first-title>
+      <img class="logo-image login" src="../../assets/img/logo.png">
+    </template>
+    <template #second-title>
+      Давайте начнём!
+    </template>
+    <template #content>
       <form @submit.prevent="handleLogin" novalidate>
         <p v-if="errors.incorrect" class="error title">{{ errors.incorrect }}</p>
         <p v-if="errors.others" class="error title">{{ errors.others }}</p>
@@ -34,21 +27,26 @@ import Input from "@/components/ui/Input.vue";
               required
           ></Input>
 
-        <SubmitButton>Войти</SubmitButton>
+          <SubmitButton>Войти</SubmitButton>
 
-        <GotoLink href="login/forgot">Не помню пароль</GotoLink>
+          <GotoLink href="login/forgot">Не помню пароль</GotoLink>
 
         </div>
 
       </form>
-    </div>
-  </div>
+    </template>
+  </Container>
 </template>
 
 <script>
 import {authService} from '@/services/AuthService.js'
+import SubmitButton from "@/components/ui/SubmitButton.vue";
+import GotoLink from "@/components/ui/GotoLink.vue";
+import Input from "@/components/ui/Input.vue";
+import Container from "@/components/Container.vue";
 
 export default {
+  components: {Container, Input, SubmitButton, GotoLink},
   data() {
     return {
       formData: {
@@ -98,5 +96,14 @@ export default {
 </script>
 
 <style scoped>
+.error {
+  text-align: left;
+  color: var(--error-text);
+  font-size: 12px;
+}
 
+.error.title{
+  font-size: 16px;
+  text-align: center;
+}
 </style>

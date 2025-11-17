@@ -11,16 +11,14 @@ import DropdownIcon from "@/components/icons/DropdownIcon.vue";
 </template>
 
 <script>
-import {useUserStore} from "@/stores/user.js";
+
 
 export default {
   data(){
+    return{
+      username: 'username'
+    }
   },
-  setup() {
-    const userStore = useUserStore()
-    const username = computed(() => userStore.getEmail)
-    return username
-  }
 }
 </script>
 

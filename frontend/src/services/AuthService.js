@@ -1,15 +1,11 @@
 import apiClient from '@/api/index.js'
 import router from '@/router/index.js';
 import {tokenService} from '@/services/TokenService.js'
-import {useUserStore} from "@/stores/user.js";
 
 export const authService = {
     async login({email, password}) {
         try {
             const response = await apiClient.post('/auth-api/login', {email, password})
-
-            const userStore = useUserStore()
-            userStore.setAuth(response.data.accessToken, response.data.refreshToken)
 
             router.push('/')
             return {success: true, data: response.data}

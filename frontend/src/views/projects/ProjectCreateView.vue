@@ -17,7 +17,7 @@
 
         <select multiple v-model="form.developers">
           <option v-for="user in users" :key="user.id" :value="user.id">
-            {{ user.firstname }}
+            {{ user.firstname }} {{ user.lastname }} ({{ user.email }})
           </option>
         </select>
 

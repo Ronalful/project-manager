@@ -1,7 +1,6 @@
 <template>
   <div class="modal-overlay" @click.self="close">
     <div class="modal-content">
-      <!-- Заголовок -->
       <div class="modal-header">
         <h2 class="project-title">{{ project.name }}</h2>
         <button @click="close" class="close-btn">&times;</button>
@@ -13,7 +12,6 @@
           <p class="project-description">{{ project.description }}</p>
         </div>
 
-        <!-- Разработчики -->
         <div class="developers-section">
           <h3 class="section-title">Команда разработки</h3>
           <div class="developers-grid">
@@ -73,6 +71,7 @@ export default {
     document.addEventListener('keydown', handleEscape)
 
     this.handleLoadProject()
+    this.handleLoadDevelopers()
   },
   methods: {
     async handleLoadProject() {
@@ -81,12 +80,24 @@ export default {
         const response = await projectUserService.getProjectInfo(this.projectId)
         if (response.success) {
           this.setProjectInfo(response.data)
-          console.log(this.project)
         }
       } catch (error) {
         console.error('Error loading projects:', error)
       } finally {
         this.loading = false
+      }
+    },
+    async handleLoadDevelopers(){
+      this.loadingUsers = true
+      try {
+        const response = await userAdminService.getAllUsers()
+        if (response.success) {
+          this.users = response.data;
+        }
+      } catch (error) {
+        console.error('Error loading users:', error)
+      } finally {
+        this.loadingUsers = false
       }
     },
     setProjectInfo(data) {

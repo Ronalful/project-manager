@@ -9,11 +9,11 @@
               required
           ></Input>
 
-        <select multiple v-model="form.developers">
-          <option v-for="user in users" :key="user.id" :value="user.id">
-            {{ user.firstname }}
-          </option>
-        </select>
+        <MultiSelect
+            v-model="form.developers"
+            :options="users"
+            placeholder="Назначить разработчиков..."
+        />
 
           <Textarea
             ref="descriptionField"
@@ -22,6 +22,7 @@
             required
             >
           </Textarea>
+
 
         <div class="form-actions">
           <SubmitButton
@@ -40,8 +41,8 @@ import {userAdminService} from "@/services/UserAdminService.js";
 import Input from "@/components/ui/Input.vue";
 import Textarea from "@/components/ui/Textarea.vue"
 import SubmitButton from "@/components/ui/SubmitButton.vue";
-import Select from "@/components/ui/Select.vue";
 import BaseModal from "@/components/BaseModal.vue";
+import MultiSelect from "@/components/ui/MultiSelect.vue";
 
 export default {
   data() {
@@ -53,7 +54,27 @@ export default {
         description: '',
         developers: [],
       },
-      users: [],
+      usersData: [
+        {
+          id: '1',
+          firstname: 'Ivan',
+          lastname: 'Ivanov',
+          email: 'ivanov@gmail.com'
+        },
+        {
+          id: '2',
+          firstname: 'Elen',
+          lastname: 'Sergeeva',
+          email: 'sergeeva@gmail.com'
+        },
+        {
+          id: '3',
+          firstname: 'Kate',
+          lastname: 'Livanova',
+          email: 'livanova@gmail.com'
+        },
+      ],
+      users:[],
       loading: false,
       loadingUsers: false,
     }
@@ -62,7 +83,6 @@ export default {
   methods: {
     async submitForm() {
       this.loading = true
-      console.log(this.form.developers)
       try {
         if (!this.validateForm()) {
           return;
@@ -75,14 +95,12 @@ export default {
 
         if(response.success){
           for(const developer of this.form.developers){
-            console.log(developer)
             const assign = await projectAdminService.assignDeveloper({
               projectId: response.data.id,
               userId: developer
             })
           }
         }
-alert('wait')
         this.$emit('success', response.data)
 
         this.close()
@@ -98,12 +116,24 @@ alert('wait')
       try {
         const response = await userAdminService.getAllUsers()
         if (response.success) {
-          this.users = response.data;
+          this.prepareUsers(response.data);
+        }
+        else{
+          this.prepareUsers(this.usersData);
         }
       } catch (error) {
         console.error('Error loading users:', error)
       } finally {
         this.loadingUsers = false
+      }
+    },
+
+    prepareUsers(data){
+      for (const userData of data){
+        this.users.push({
+          value: userData.id,
+          label: userData.firstname + ' ' + userData.lastname + ' (' + userData.email + ')'
+        })
       }
     },
 
@@ -120,7 +150,7 @@ alert('wait')
       return isValid
     }
   },
-  components: {BaseModal, Select, SubmitButton, Input, Textarea},
+  components: {BaseModal, Multiselect, SubmitButton, Input, Textarea},
 }
 </script>
 

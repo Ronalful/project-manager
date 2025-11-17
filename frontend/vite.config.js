@@ -34,7 +34,13 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/project-assignments/, '/api/v1/project-assignments'),
-      }
+      },
+      '/user':{
+        target: 'http://localhost:8222',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/user/, '/api/v1/user'),
+      },
     },
   }
 })

@@ -66,7 +66,6 @@ export default {
   methods: {
     async submitForm() {
       this.loading = true
-      console.log(this.form.developers)
       try {
         if (!this.validateForm()) {
           return;
@@ -79,14 +78,12 @@ export default {
 
         if(response.success){
           for(const developer of this.form.developers){
-            console.log(developer)
             const assign = await projectAdminService.assignDeveloper({
               projectId: response.data.id,
               userId: developer
             })
           }
         }
-alert('wait')
         this.$emit('success', response.data)
 
         this.close()

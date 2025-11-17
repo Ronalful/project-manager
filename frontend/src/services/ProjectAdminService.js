@@ -24,7 +24,6 @@ export const projectAdminService = {
     async assignDeveloper({projectId, userId}){
         try {
             const response = await apiClient.post('/project-assignments/assign', {projectId, userId})
-            console.log(response)
             return {success: true, data: response.data}
         }
         catch (error){

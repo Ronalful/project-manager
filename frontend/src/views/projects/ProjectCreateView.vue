@@ -54,6 +54,7 @@ export default {
         description: '',
         developers: [],
       },
+      // УБРАТЬ ----------------------------
       usersData: [
         {
           id: '1',
@@ -74,6 +75,7 @@ export default {
           email: 'livanova@gmail.com'
         },
       ],
+      // ----------------------------------
       users:[],
       loading: false,
       loadingUsers: false,
@@ -118,9 +120,11 @@ export default {
         if (response.success) {
           this.prepareUsers(response.data);
         }
+        // УБРАТЬ -------------------------
         else{
           this.prepareUsers(this.usersData);
         }
+        // ------------------------------
       } catch (error) {
         console.error('Error loading users:', error)
       } finally {

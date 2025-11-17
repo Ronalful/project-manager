@@ -78,6 +78,10 @@ export default {
     placeholder: {
       type: String,
       default: 'Выберите варианты...'
+    },
+    preSelectedItems: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -87,6 +91,9 @@ export default {
       highlightedIndex: -1,
       selectedItems: []
     }
+  },
+  created() {
+    this.selectedItems = this.preSelectedItems
   },
   computed: {
     filteredItems() {
@@ -325,8 +332,7 @@ export default {
 .no-results {
   padding: 16px;
   text-align: center;
-  color: #999;
-  font-style: italic;
+  color: var(--font-additional);
 }
 
 /* Скрыть скроллбар для Chrome, Safari и Opera */

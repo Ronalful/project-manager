@@ -35,6 +35,7 @@
             <MultiSelect
                 v-model="project.developers"
                 :options="users"
+                :preSelectedItems="actualDevelopers"
                 placeholder="Назначить разработчиков..."
             />
 
@@ -50,7 +51,6 @@
 </template>
 
 <script>
-import router from "@/router/index.js";
 import {projectAdminService} from "@/services/ProjectAdminService.js";
 import {userAdminService} from "@/services/UserAdminService.js";
 import Input from "@/components/ui/Input.vue";
@@ -68,6 +68,7 @@ export default {
     return {
       projectId: '',
       backto: '/projects',
+      // УБРАТЬ, оставить пустые поля --------------------
       project: {
         name: 'Project',
         description: 'проект балванка',
@@ -79,6 +80,7 @@ export default {
         }
         ],
       },
+      // УБРАТЬ --------------------
       usersData: [
         {
           id: '1',
@@ -99,7 +101,9 @@ export default {
           email: 'livanova@gmail.com'
         },
       ],
+      // ----------------------------
       users: [],
+      actualDevelopers: [],
     }
   },
   mounted() {
@@ -108,7 +112,6 @@ export default {
     this.handleLoadProject()
     this.handleLoadDevelopers()
   },
-
   methods: {
     async handleLoadProject() {
       this.loading = true
@@ -117,6 +120,11 @@ export default {
         if (response.success) {
           this.setProjectInfo(response.data)
         }
+        // УБРАТЬ --------------------
+        else{
+          this.prepareUsers(this.project.developers, this.actualDevelopers)
+        }
+        // ----------------------------
       } catch (error) {
         console.error('Error loading projects:', error)
       } finally {
@@ -128,10 +136,14 @@ export default {
       try {
         const response = await userAdminService.getAllUsers()
         if (response.success) {
-          this.prepareUsers(response.data);
-        } else {
-          this.prepareUsers(this.usersData);
+          this.prepareUsers(response.data, this.users);
         }
+        // УБРАТЬ --------------------
+        else {
+          this.prepareUsers(this.usersData, this.users);
+        }
+        // ----------------------------
+
       } catch (error) {
         console.error('Error loading users:', error)
       } finally {
@@ -149,15 +161,17 @@ export default {
           email: developer.email
         })
       }
+      this.prepareUsers(this.project.developers, this.actualDevelopers)
     },
-    prepareUsers(data) {
+    prepareUsers(data, target) {
       for (const userData of data) {
-        this.users.push({
+        target.push({
           value: userData.id,
           label: userData.firstname + ' ' + userData.lastname + ' (' + userData.email + ')'
         })
       }
     },
+
     async submitForm() {
       this.loading = true
       try {

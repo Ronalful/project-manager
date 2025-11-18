@@ -6,6 +6,7 @@ export const authService = {
     async login({email, password}) {
         try {
             const response = await apiClient.post('/auth-api/login', {email, password})
+            tokenService.setTokens(response.data?.accessToken, response.data?.refreshToken)
 
             router.push('/')
             return {success: true, data: response.data}
@@ -16,7 +17,7 @@ export const authService = {
                 if (error.response?.data === "User is disabled") {
                     const responseActivation = await this.initiateActivation({email, password})
 
-                    tokenService.setTempTokens(responseActivation.accessToken, responseActivation.refreshToken)
+                    tokenService.setTempTokens(responseActivation.data?.accessToken, responseActivation.data?.refreshToken)
 
                     router.push('/login/activate')
                     return {success: false, requiresActivation: true}
@@ -92,7 +93,7 @@ export const authService = {
     async confirmActivation({secretPhrase, password}) {
         try {
             const response = await apiClient.post('/auth-api/confirm-activation', {secretPhrase, password})
-            tokenService.setTokens(response.accessToken, response.refreshToken)
+            tokenService.setTokens(response.data?.accessToken, response.data?.refreshToken)
             return {success: true, data: response.data}
         } catch (error) {
             console.error('Activation initiation failed:', error)

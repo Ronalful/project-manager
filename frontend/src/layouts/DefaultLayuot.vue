@@ -13,7 +13,6 @@ import DefaultFooter from "@/components/footers/DefaultFooter.vue";
       </div>
     </div>
   </main>
-  <DefaultFooter/>
 </template>
 
 <style scoped>

@@ -17,6 +17,7 @@ import AddProjectCard from "@/components/AddProjectCard.vue";
 
 <script>
 import {projectAdminService} from "@/services/ProjectAdminService.js";
+import {projectUserService} from "@/services/ProjectUserService.js";
 
 export default {
   data() {

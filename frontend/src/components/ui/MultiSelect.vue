@@ -82,7 +82,11 @@ export default {
     preSelectedItems: {
       type: Array,
       default: () => []
-    }
+    },
+    modelValue: {
+      type: Array,
+      default: () => []
+    },
   },
   data() {
     return {
@@ -110,6 +114,7 @@ export default {
       )
     }
   },
+  emits: ['update:modelValue'],
   watch: {
     value: {
       immediate: true,
@@ -131,6 +136,7 @@ export default {
       } else {
         this.selectItem(item)
       }
+      this.$emit('update:modelValue', this.selectedItems);
     },
 
     selectItem(item) {
@@ -145,6 +151,7 @@ export default {
       this.selectedItems = this.selectedItems.filter(
           selected => selected.value !== item.value
       )
+      this.$emit('update:modelValue', this.selectedItems);
     },
 
     isSelected(item) {

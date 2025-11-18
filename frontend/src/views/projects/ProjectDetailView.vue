@@ -45,26 +45,10 @@ export default {
     return {
       backto: '/projects',
       projectId: '',
-      // УБРАТЬ, оставить пустые поля --------------------
       project: {
-        name: 'Project',
-        description: 'проект балванка',
-        developers: [
-          // УБРАТЬ --------------------
-          {
-            id: '1',
-            firstname: 'Ivan',
-            lastname: 'Ivanov',
-            email: 'ivanov@gmail.com'
-          },
-          {
-            id: '2',
-            firstname: 'Elen',
-            lastname: 'Sergeeva',
-            email: 'sergeeva@gmail.com'
-          },
-            // --------------------------------
-        ],
+        name: '',
+        description: '',
+        developers: [],
       }
     }
   },

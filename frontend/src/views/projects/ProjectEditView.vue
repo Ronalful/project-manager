@@ -68,40 +68,11 @@ export default {
     return {
       projectId: '',
       backto: '/projects',
-      // УБРАТЬ, оставить пустые поля --------------------
       project: {
-        name: 'Project',
-        description: 'проект балванка',
-        developers: [{
-          id: '1',
-          firstname: 'Ivan',
-          lastname: 'Ivanov',
-          email: 'ivanov@gmail.com'
-        }
-        ],
+        name: '',
+        description: '',
+        developers: [],
       },
-      // УБРАТЬ --------------------
-      usersData: [
-        {
-          id: '1',
-          firstname: 'Ivan',
-          lastname: 'Ivanov',
-          email: 'ivanov@gmail.com'
-        },
-        {
-          id: '2',
-          firstname: 'Elen',
-          lastname: 'Sergeeva',
-          email: 'sergeeva@gmail.com'
-        },
-        {
-          id: '3',
-          firstname: 'Kate',
-          lastname: 'Livanova',
-          email: 'livanova@gmail.com'
-        },
-      ],
-      // ----------------------------
       users: [],
       actualDevelopers: [],
     }
@@ -120,11 +91,6 @@ export default {
         if (response.success) {
           this.setProjectInfo(response.data)
         }
-        // УБРАТЬ --------------------
-        else{
-          this.prepareUsers(this.project.developers, this.actualDevelopers)
-        }
-        // ----------------------------
       } catch (error) {
         console.error('Error loading projects:', error)
       } finally {
@@ -138,12 +104,6 @@ export default {
         if (response.success) {
           this.prepareUsers(response.data, this.users);
         }
-        // УБРАТЬ --------------------
-        else {
-          this.prepareUsers(this.usersData, this.users);
-        }
-        // ----------------------------
-
       } catch (error) {
         console.error('Error loading users:', error)
       } finally {

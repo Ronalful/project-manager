@@ -1,5 +1,5 @@
 <template>
-  <BaseModal :backto="backto" :open="true">
+  <BaseModal :backto="backto" :open="isOpen">
     <template #header>
       <h2>Добавить проект</h2>
     </template>
@@ -54,31 +54,10 @@ export default {
         description: '',
         developers: [],
       },
-      // УБРАТЬ ----------------------------
-      usersData: [
-        {
-          id: '1',
-          firstname: 'Ivan',
-          lastname: 'Ivanov',
-          email: 'ivanov@gmail.com'
-        },
-        {
-          id: '2',
-          firstname: 'Elen',
-          lastname: 'Sergeeva',
-          email: 'sergeeva@gmail.com'
-        },
-        {
-          id: '3',
-          firstname: 'Kate',
-          lastname: 'Livanova',
-          email: 'livanova@gmail.com'
-        },
-      ],
-      // ----------------------------------
       users:[],
       loading: false,
       loadingUsers: false,
+      isOpen: true,
     }
   },
 
@@ -99,13 +78,13 @@ export default {
           for(const developer of this.form.developers){
             const assign = await projectAdminService.assignDeveloper({
               projectId: response.data.id,
-              userId: developer
+              userId: developer.value
             })
           }
         }
+        this.isOpen = false
         this.$emit('success', response.data)
 
-        this.close()
       } catch (error) {
         console.error('Error creating project:', error)
       } finally {
@@ -120,11 +99,6 @@ export default {
         if (response.success) {
           this.prepareUsers(response.data);
         }
-        // УБРАТЬ -------------------------
-        else{
-          this.prepareUsers(this.usersData);
-        }
-        // ------------------------------
       } catch (error) {
         console.error('Error loading users:', error)
       } finally {

@@ -75,13 +75,13 @@ const isActive = (path) => {
 
 .header__nav-link {
   text-align: center;
-  color: var(--gray);
+  color: var(--font-main);
   padding: 0.5rem;
   margin: 0.5em;
 }
 
 .header__nav-link:hover {
-  color: var(--gray);
+  color: var(--font-additional);
   text-decoration: none;
 }
 

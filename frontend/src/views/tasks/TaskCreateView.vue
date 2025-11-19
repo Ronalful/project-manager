@@ -1,3 +1,8 @@
+<script setup>
+console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+</script>
+
+
 <template>
   <BaseModal
       :backto="backto"
@@ -6,7 +11,7 @@
       ref="baseModal"
   >
     <template #header>
-      <h2>Добавить проект</h2>
+      <h2>Создать задачу</h2>
     </template>
 
     <template #main>
@@ -32,9 +37,9 @@
             required
         />
 
-          <SubmitButton>
-            {{ loading ? 'Создание...' : 'Создать' }}
-          </SubmitButton>
+        <SubmitButton>
+          {{ loading ? 'Создание...' : 'Создать' }}
+        </SubmitButton>
       </form>
     </template>
   </BaseModal>
@@ -49,17 +54,20 @@ import Textarea from "@/components/ui/Textarea.vue"
 import SubmitButton from "@/components/ui/SubmitButton.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import MultiSelect from "@/components/ui/MultiSelect.vue";
-
 export default {
   data() {
     return {
-      backto: "/projects",
+      backto: "/tasks",
       form: {
-        name: '',
+        title: '',
         description: '',
+        priority: '',
+        status: '',
+        dueDate: '',
         developers: [],
       },
       users:[],
+      projects: [],
       loading: false,
       loadingUsers: false,
       isOpen: true,
@@ -133,6 +141,7 @@ export default {
     },
   },
   mounted() {
+    console.log('ddfdsfdfsfd')
     this.handleLoadDevelopers()
   }
 }

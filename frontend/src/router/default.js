@@ -1,4 +1,5 @@
 import projectsRoutes from './projects.js'
+import tasksRoutes from './tasks.js'
 export default [
     {
         path: '/',
@@ -12,6 +13,7 @@ export default [
                 component: () => import('@/views/HomeView.vue')
             },
             ...projectsRoutes,
+            ...tasksRoutes,
         ]
     },
 ]

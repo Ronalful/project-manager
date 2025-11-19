@@ -1,5 +1,8 @@
 <template>
-  <BaseModal :backto="backto" :open="true">
+  <BaseModal
+      :backto="backto"
+      :open="true"
+  >
     <template #header>
       <h2>{{ project.name }}</h2>
     </template>

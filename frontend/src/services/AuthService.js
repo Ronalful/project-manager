@@ -1,7 +1,7 @@
 import apiClient from '@/api/index.js'
 import router from '@/router/index.js';
 import {tokenService} from '@/services/TokenService.js'
-import {useUserStore} from "@/stores/user.js";
+import {useUserStore} from "@/stores/UserStore.js";
 
 export const authService = {
     async login({email, password}) {

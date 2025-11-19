@@ -6,9 +6,11 @@ import axios from "axios";
 import App from './App.vue'
 import router from './router'
 import themeMixin from './mixins/theme.js'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 const app = createApp(App)
 const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 
 app.mixin(themeMixin)
 app.use(router)

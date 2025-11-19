@@ -5,15 +5,22 @@ import adminRouters from "./admin.js"
 import defaultRouters from "./default.js"
 import NotFoundView from "@/views/NotFoundView.vue";
 import {useUserStore} from "@/stores/UserStore.js";
+import AccessDeniedView from "@/views/AccessDeniedView.vue";
+
 
 const routes = [
-        ...authRouters,
-        ...adminRouters,
-        ...defaultRouters,
+    ...authRouters,
+    ...adminRouters,
+    ...defaultRouters,
     {
         path: '/404',
         name: 'NotFound',
         component: NotFoundView
+    },
+    {
+        path: '/access-denied',
+        name: 'AccessDenied',
+        component: AccessDeniedView
     },
     {
         path: '/:catchAll(.*)',
@@ -27,25 +34,24 @@ const router = createRouter({
     routes: routes
 })
 
-router.beforeEach(async(to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     const isAuthenticated = tokenService.isAuthenticated()
     const isUsingTempTokens = tokenService.isUsingTempTokens()
 
-    if (to.meta.requiresActivationToken){
-        if(isAuthenticated){
+    if (to.meta.requiresActivationToken) {
+        if (isAuthenticated) {
             next({name: 'Home'})
             return
-        }
-        else{
-            if (!isUsingTempTokens){
+        } else {
+            if (!isUsingTempTokens) {
                 next({name: 'Login'})
                 return
             }
         }
     }
 
-    if (to.meta.requiresAuth){
-        if(!isAuthenticated) {
+    if (to.meta.requiresAuth) {
+        if (!isAuthenticated) {
             next({
                 name: 'Login',
                 query: {redirect: to.fullPath}
@@ -61,12 +67,12 @@ router.beforeEach(async(to, from, next) => {
         }
     }
 
-    if(to.meta.requiresAdmin){
-        //const userStore = useUserStore()
-        // if(!userStore.isAdmin){
-        //     // что-нибудь придумать для доступа
-        //     return
-        // }
+    if (to.meta.requiresAdmin) {
+        const userStore = useUserStore()
+        if (!userStore.isAdmin) {
+            next({name: 'AccessDenied'})
+            return
+        }
     }
 
     next()

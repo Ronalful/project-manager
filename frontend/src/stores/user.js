@@ -1,6 +1,7 @@
 import {tokenService} from "@/services/TokenService.js";
-import { defineStore } from 'pinia'
+import {defineStore} from 'pinia'
 import {jwtUtils} from "@/utils/jwtParser.js";
+import {userAllService} from "@/services/UserAllService.js";
 
 //поменять на USER роли
 export const useUserStore = defineStore('user', {
@@ -10,40 +11,42 @@ export const useUserStore = defineStore('user', {
             firstname: '',
             lastname: '',
             email: '',
-            role: 'ADMIN',
+            role: '',
         },
         access_token: '',
         refresh_token: '',
         isAuthenticated: false,
     }),
     getters: {
-        //isAdmin: (state) => state.user.role === 'ADMIN',
-        isAdmin(state){
-            console.log(state.user.role)
+        isAdmin(state) {
             return state.user.role === 'ADMIN'
         },
-        isUser: (state) => state.user.role === 'USER'
+        isUser (state) {
+            return state.user.role === 'USER'
+        }
     },
     actions: {
-        setAuth(accessToken, refreshToken = null) {
-
-            const userData = jwtUtils.getUserFromToken(accessToken)
-
-            if(userData){
-                this.user = {
-                    email: userData.email,
-                    role: userData.role || 'ADMIN',
-                }
-            }
-
+        async setAuth(accessToken, refreshToken = null) {
             this.accessToken = accessToken
             this.refreshToken = refreshToken
 
             tokenService.setTokens(this.accessToken, this.refreshToken)
 
-            this.isAuthenticated = true
+            try {
+                const userData = await userAllService.getMyInfo()
 
-            localStorage.setItem('user', JSON.stringify(userData))
+                if (userData.success) {
+                    this.user = {
+                        id: userData.data.id,
+                        firstname: userData.data.firstname,
+                        lastname: userData.data.lastname,
+                        email: userData.data.email,
+                        role: userData.data.role,
+                    }
+                }
+            } catch (error) {
+                console.log('Error load info: ', error)
+            }
         },
 
         clearAuth() {
@@ -59,7 +62,6 @@ export const useUserStore = defineStore('user', {
             this.isAuthenticated = false
 
             tokenService.clearTokens()
-            localStorage.removeItem('user')
         }
     },
 })

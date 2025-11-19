@@ -41,6 +41,12 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/user/, '/api/v1/user'),
       },
+      '/all':{
+        target: 'http://localhost:8222',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/all/, '/api/v1/all'),
+      },
     },
   }
 })

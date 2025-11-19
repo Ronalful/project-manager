@@ -40,8 +40,7 @@ export const jwtUtils = {
             firstname: '',
             lastname: '',
             email: decoded.sub,
-            role: 'ADMIN' // пока что
+            role: decoded.roles[0].authority
         }
     },
-
 }

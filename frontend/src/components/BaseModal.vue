@@ -43,7 +43,6 @@ export default {
       this.$emit('close')
       router.push(this.backto)
       this.isOpen = false
-      console.log('close')
     }
   },
   mounted() {
@@ -132,6 +131,13 @@ export default {
   padding: 24px;
   overflow-y: auto;
   max-height: calc(90vh - 100px);
+}
+
+.modal-footer{
+  padding: 0 24px;
+  display: flex;
+  flex-direction: row-reverse;
+
 }
 
 @media (max-width: 640px) {

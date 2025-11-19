@@ -51,6 +51,14 @@
         </SubmitButton>
       </form>
     </template>
+
+    <template #footer>
+      <DeleteButton
+          @click="deleteProject"
+      >
+        {{ loading ? 'Удаление...' : 'Удалить проект' }}
+      </DeleteButton>
+    </template>
   </BaseModal>
 </template>
 
@@ -63,9 +71,10 @@ import SubmitButton from "@/components/ui/SubmitButton.vue";
 import {projectUserService} from "@/services/ProjectUserService.js";
 import BaseModal from "@/components/BaseModal.vue";
 import MultiSelect from "@/components/ui/MultiSelect.vue";
+import DeleteButton from "@/components/ui/DeleteButton.vue";
 
 export default {
-  components: { BaseModal, MultiSelect, SubmitButton, Input, Textarea },
+  components: {BaseModal, MultiSelect, Input, Textarea, SubmitButton, DeleteButton},
   data() {
     return {
       projectId: '',
@@ -79,12 +88,6 @@ export default {
       actualDevelopers: [],
       loading: false,
     }
-  },
-  mounted() {
-    this.projectId = this.$route.params.id;
-
-    this.handleLoadProject()
-    this.handleLoadDevelopers()
   },
   methods: {
     async handleLoadProject() {
@@ -156,15 +159,23 @@ export default {
         //     })
         //   }
         // }
-        this.$refs.baseModal.close()
       } catch (error) {
         console.error('Error creating project:', error)
       } finally {
         this.loading = false
+        this.$refs.baseModal.close()
       }
     },
-    isDeveloperSelected(userId) {
-      return this.project.developers.some(dev => dev.id === userId);
+    async deleteProject(){
+      try {
+        this.loading = true
+        const response = await projectAdminService.deleteProject(this.projectId)
+      } catch (error) {
+        console.error('Error creating project:', error)
+      } finally {
+        this.loading = false
+        this.$refs.baseModal.close()
+      }
     },
     validateForm() {
       const fields = [this.$refs.nameField, this.$refs.descriptionField]
@@ -178,6 +189,12 @@ export default {
 
       return isValid
     }
+  },
+  mounted() {
+    this.projectId = this.$route.params.id;
+
+    this.handleLoadProject()
+    this.handleLoadDevelopers()
   },
 }
 </script>

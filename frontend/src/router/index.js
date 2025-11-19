@@ -11,9 +11,14 @@ const routes = [
         ...adminRouters,
         ...defaultRouters,
     {
-        path: '/:catchAll(.*)',  // Ловит любой путь, какой не был ранее объявлен
+        path: '/404',
         name: 'NotFound',
         component: NotFoundView
+    },
+    {
+        path: '/:catchAll(.*)',
+        name: 'CatchAll',
+        redirect: '/404'
     }
 ]
 

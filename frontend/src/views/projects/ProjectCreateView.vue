@@ -81,21 +81,19 @@ export default {
           description: this.form.description
         })
 
-        if(response.success){
-          for(const developer of this.form.developers){
+        if(response.success) {
+          for (const developer of this.form.developers) {
             const assign = await projectAdminService.assignDeveloper({
               projectId: response.data.id,
               userId: developer.value
             })
           }
-
-          this.$refs.baseModal.close()
         }
-
       } catch (error) {
         console.error('Error creating project:', error)
       } finally {
         this.loading = false
+        this.$refs.baseModal.close()
       }
     },
 

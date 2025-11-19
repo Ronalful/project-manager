@@ -47,7 +47,7 @@
         </div>
         <SubmitButton
         >
-          {{ loading ? 'Сохранение...' : 'Редактировать' }}
+          {{ loading.editing ? 'Сохранение...' : 'Редактировать' }}
         </SubmitButton>
       </form>
     </template>
@@ -56,7 +56,7 @@
       <DeleteButton
           @click="deleteProject"
       >
-        {{ loading ? 'Удаление...' : 'Удалить проект' }}
+        {{ loading.deleting ? 'Удаление...' : 'Удалить проект' }}
       </DeleteButton>
     </template>
   </BaseModal>
@@ -86,12 +86,17 @@ export default {
       },
       users: [],
       actualDevelopers: [],
-      loading: false,
-    }
+      loading: {
+        loading: false,
+        users: false,
+        editing: false,
+        deleting: false,
+      }
+  }
   },
   methods: {
     async handleLoadProject() {
-      this.loading = true
+      this.loading.loading = true
       try {
         const response = await projectAdminService.getProjectInfo(this.projectId)
         if (response.success) {
@@ -100,11 +105,11 @@ export default {
       } catch (error) {
         console.error('Error loading projects:', error)
       } finally {
-        this.loading = false
+        this.loading.loading = false
       }
     },
     async handleLoadDevelopers() {
-      this.loadingUsers = true
+      this.loading.users = true
       try {
         const response = await userAdminService.getAllUsers()
         if (response.success) {
@@ -113,7 +118,7 @@ export default {
       } catch (error) {
         console.error('Error loading users:', error)
       } finally {
-        this.loadingUsers = false
+        this.loading.users = false
       }
     },
     setProjectInfo(data) {
@@ -139,7 +144,7 @@ export default {
     },
 
     async submitForm() {
-      this.loading = true
+      this.loading.editing = true
       try {
         if (!this.validateForm()) {
           return;
@@ -162,18 +167,18 @@ export default {
       } catch (error) {
         console.error('Error creating project:', error)
       } finally {
-        this.loading = false
+        this.loading.editing = false
         this.$refs.baseModal.close()
       }
     },
     async deleteProject(){
       try {
-        this.loading = true
+        this.loading.deleting = true
         const response = await projectAdminService.deleteProject(this.projectId)
       } catch (error) {
         console.error('Error creating project:', error)
       } finally {
-        this.loading = false
+        this.loading.deleting = false
         this.$refs.baseModal.close()
       }
     },

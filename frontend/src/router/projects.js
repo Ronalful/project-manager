@@ -1,12 +1,9 @@
 export default [
     {
         path: 'projects',
+        name: 'Projects',
+        component: () => import('@/views/projects/ProjectsView.vue'),
         children: [
-            {
-                path: '',
-                name: 'Projects',
-                component: () => import('@/views/projects/ProjectsView.vue'),
-            },
             {
                 path: ':id',
                 children: [

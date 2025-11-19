@@ -12,8 +12,9 @@
           <router-link
               class="project-link"
               :to="{
-                name: 'ProjectEdit',
-                params: { id: this.project?.id }}"
+                name: this.projectLink,
+                params: { id: this.project?.id }
+              }"
           >
             {{ project.name }}
           </router-link>
@@ -48,6 +49,9 @@
 </template>
 
 <script>
+import {mapState} from "pinia";
+import {useUserStore} from "@/stores/UserStore.js";
+
 export default {
   props:[
       'project'
@@ -71,6 +75,13 @@ export default {
     hiddenDevelopersCount() {
       const total = this.project.developers?.length || 0
       return total > 3 ? total - 3 : 0
+    },
+
+    ...mapState(useUserStore, ['isAdmin']),
+
+    projectLink(){
+      if(this.isAdmin) return 'ProjectEdit'
+      else return 'ProjectDetail'
     }
   },
 }

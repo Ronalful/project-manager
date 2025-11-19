@@ -19,9 +19,6 @@ export const authService = {
                 // Проверяем, что это неактивированный аккаунт
                 if (error.response?.data === "User is disabled") {
                     const responseActivation = await this.initiateActivation({email, password})
-
-                    tokenService.setTempTokens(responseActivation.data?.accessToken, responseActivation.data?.refreshToken)
-
                     router.push('/login/activate')
                     return {success: false, requiresActivation: true}
                 } else if (error.response?.data === "Password expired") {
@@ -86,7 +83,8 @@ export const authService = {
     async initiateActivation({email, password}) {
         try {
             const response = await apiClient.post('/auth-api/initiate-activation', {email, password})
-            return response.data
+            tokenService.setTempTokens(response.data?.accessToken, response.data?.refreshToken)
+            return {success: true, data: response.data}
         } catch (error) {
             console.error('Activation initiation failed:', error)
             throw error
@@ -96,7 +94,7 @@ export const authService = {
     async confirmActivation({secretPhrase, password}) {
         try {
             const response = await apiClient.post('/auth-api/confirm-activation', {secretPhrase, password})
-            tokenService.setTokens(response.data?.accessToken, response.data?.refreshToken)
+            tokenService.clearTokens()
             return {success: true, data: response.data}
         } catch (error) {
             console.error('Activation initiation failed:', error)

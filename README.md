@@ -121,5 +121,7 @@ npm run dev
 
 # Доступные страницы:
 1. **Страница авторизации:**  http://localhost:5173/login , там же ссылка на восстановление пароля http://localhost:5173/login/forgot
-
-
+2. **Страница проектов:** http://localhost:5173/projects
+- **Редактирование проекта (только для админа):** http://localhost:5173/projects/1/edit
+- **Детальная страница проекта (только для пользователей):** http://localhost:5173/projects/30
+- **Создание проекта (только для админа):** http://localhost:5173/projects/create

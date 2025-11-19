@@ -1,5 +1,11 @@
 <template>
-  <BaseModal :backto="backto" :open="isOpen">
+  <BaseModal
+      :backto="backto"
+      :open="isOpen"
+      v-show="isOpen"
+      @close="closeModal"
+      ref="baseModal"
+  >
     <template #header>
       <h2>Добавить проект</h2>
     </template>
@@ -60,7 +66,8 @@ export default {
       isOpen: true,
     }
   },
-
+  components: {BaseModal, MultiSelect, SubmitButton, Input, Textarea},
+  inject: ['close'],
   methods: {
     async submitForm() {
       this.loading = true
@@ -81,9 +88,9 @@ export default {
               userId: developer.value
             })
           }
+
+          this.$refs.baseModal.close()
         }
-        this.isOpen = false
-        this.$emit('success', response.data)
 
       } catch (error) {
         console.error('Error creating project:', error)
@@ -116,7 +123,7 @@ export default {
     },
 
     validateForm(){
-      const fields = this.$refs
+      const fields = [this.$refs.nameField, this.$refs.descriptionField]
       let isValid = true
 
       Object.values(fields).forEach(field => {
@@ -126,10 +133,8 @@ export default {
       })
 
       return isValid
-    }
+    },
   },
-  components: {BaseModal, MultiSelect, SubmitButton, Input, Textarea},
-
   mounted() {
     this.handleLoadDevelopers()
   }

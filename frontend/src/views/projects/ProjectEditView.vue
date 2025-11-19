@@ -1,5 +1,9 @@
 <template>
-  <BaseModal :backto="backto" :open="true">
+  <BaseModal
+      :backto="backto"
+      :open="true"
+      ref="baseModal"
+  >
     <template #header>
       <h2>Проект #{{ projectId }}</h2>
     </template>
@@ -43,7 +47,7 @@
         </div>
         <SubmitButton
         >
-          Редактировать
+          {{ loading ? 'Сохранение...' : 'Редактировать' }}
         </SubmitButton>
       </form>
     </template>
@@ -61,9 +65,7 @@ import BaseModal from "@/components/BaseModal.vue";
 import MultiSelect from "@/components/ui/MultiSelect.vue";
 
 export default {
-  components: {
-    BaseModal, MultiSelect, SubmitButton, Input, Textarea
-  },
+  components: { BaseModal, MultiSelect, SubmitButton, Input, Textarea },
   data() {
     return {
       projectId: '',
@@ -75,6 +77,7 @@ export default {
       },
       users: [],
       actualDevelopers: [],
+      loading: false,
     }
   },
   mounted() {
@@ -153,9 +156,7 @@ export default {
         //     })
         //   }
         // }
-        this.$emit('success', response.data)
-
-        this.close()
+        this.$refs.baseModal.close()
       } catch (error) {
         console.error('Error creating project:', error)
       } finally {
@@ -166,7 +167,7 @@ export default {
       return this.project.developers.some(dev => dev.id === userId);
     },
     validateForm() {
-      const fields = this.$refs
+      const fields = [this.$refs.nameField, this.$refs.descriptionField]
       let isValid = true
 
       Object.values(fields).forEach(field => {

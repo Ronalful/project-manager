@@ -38,16 +38,12 @@ export default {
     }
   },
   emits: ['close'],
-  setup(props, { emit }) {
-
-    const close = () => {
-      emit('close')
-      router.push(props.backto)
+  methods:{
+    close() {
+      this.$emit('close')
+      router.push(this.backto)
       this.isOpen = false
-    }
-
-    return {
-      close
+      console.log('close')
     }
   },
   mounted() {
@@ -57,6 +53,11 @@ export default {
       }
     }
     document.addEventListener('keydown', handleEscape)
+  },
+  provide() {
+    return {
+      closeModal: this.close
+    }
   },
 }
 </script>

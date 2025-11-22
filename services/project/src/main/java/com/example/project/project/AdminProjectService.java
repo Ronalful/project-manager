@@ -1,6 +1,7 @@
 package com.example.project.project;
 
 import com.example.project.exception.ProjectNotFoundException;
+import com.example.project.projectAssignment.ProjectAssignment;
 import com.example.project.projectAssignment.ProjectAssignmentRequest;
 import com.example.project.projectAssignment.ProjectAssignmentService;
 import com.example.project.task.TaskClient;
@@ -47,9 +48,14 @@ public class AdminProjectService {
     }
 
     private void unassignDevelopersInProject(Project project) {
-        for (var assignment : project.getAssignments()) {
-            projectAssignmentService.unassignUser(new ProjectAssignmentRequest(project.getId(), assignment.getUserId()));
-        }
+        var userIds = project.getAssignments().stream()
+                .map(ProjectAssignment::getUserId)
+                .toList();
+
+        projectAssignmentService.unassignUsers(new ProjectAssignmentRequest(
+                project.getId(),
+                userIds
+        ));
     }
 
     private void deleteTasksInProject(Integer projectId) {

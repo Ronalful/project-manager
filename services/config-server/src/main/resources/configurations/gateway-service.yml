@@ -69,7 +69,6 @@ spring:
           filters:
             - JwtAuthenticationFilter
 
-
         - id: task-assignment-service
           uri: http://task-service:8080
           predicates:
@@ -77,6 +76,19 @@ spring:
           filters:
             - JwtAuthenticationFilter
 
+        - id: user-comment-service
+          uri: http://task-service:8080
+          predicates:
+            - Path=/api/v1/user/comments/**
+          filters:
+            - JwtAuthenticationFilter
+
+        - id: admin-comment-service
+          uri: http://task-service:8080
+          predicates:
+            - Path=/api/v1/admin/comments/**
+          filters:
+            - JwtAuthenticationFilter
 
 
 

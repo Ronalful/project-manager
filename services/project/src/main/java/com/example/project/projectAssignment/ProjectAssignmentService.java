@@ -16,6 +16,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class ProjectAssignmentService {
@@ -28,27 +30,32 @@ public class ProjectAssignmentService {
     private final TaskAssignmentClient taskAssignmentClient;
 
     @Transactional
-    public void assignUser(ProjectAssignmentRequest request) {
-        var user = userClient.getUserById(request.userId())
-                .orElseThrow(() -> new DeveloperNotFoundException("Developer not found with id " + request.userId()));
-
-        if (!user.role().equals(Role.USER)) {
-            throw new DeveloperIsNotUser("Developer must be user");
-        }
-
+    public ProjectAssignmentResponse assignUsers(ProjectAssignmentRequest request) {
         var project = projectRepository.findById(request.projectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project not found with id " + request.projectId()));
 
-        if (isDeveloperAssignedToProject(request.userId(), project)) {
-            throw new ProjectAssignmentExistsException("This user is already assigned to this project");
-        }
+        var users = request.userIds().stream()
+                .map(userClient::getUserById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(it -> it.role().equals(Role.USER))
+                .filter(it -> !isDeveloperAssignedToProject(it.id(), project))
+                .toList();
 
-        sendDeveloperAssignedToProjectNotification(user, project);
+        users.forEach(user -> {
+            sendDeveloperAssignedToProjectNotification(user, project);
+            projectAssignmentRepository.save(ProjectAssignment.builder()
+                    .project(project)
+                    .userId(user.id())
+                    .build());
+        });
 
-        projectAssignmentRepository.save(ProjectAssignment.builder()
-                        .project(project)
-                        .userId(user.id())
-                        .build());
+        return new ProjectAssignmentResponse(
+                request.projectId(),
+                users.stream()
+                        .map(UserResponse::id)
+                        .toList()
+        );
     }
 
     private boolean isDeveloperAssignedToProject(Integer developerId, Project project) {
@@ -74,25 +81,31 @@ public class ProjectAssignmentService {
     }
 
     @Transactional
-    public void unassignUser(ProjectAssignmentRequest request) {
+    public ProjectAssignmentResponse unassignUsers(ProjectAssignmentRequest request) {
         var project = projectRepository.findById(request.projectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project not found with id " + request.projectId()));
-        var user = userClient.getUserById(request.userId())
-                .orElseThrow(() -> new DeveloperNotFoundException("Developer not found with id " + request.userId()));
 
-        if (!user.role().equals(Role.USER)) {
-            throw new DeveloperIsNotUser("Developer must be user");
-        }
+        var users = request.userIds().stream()
+                .map(userClient::getUserById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(it -> it.role().equals(Role.USER))
+                .filter(it -> isDeveloperAssignedToProject(it.id(), project))
+                .toList();
 
-        if (!isDeveloperAssignedToProject(request.userId(), project)) {
-            throw new ProjectAssignmentNotExistsException("This user is not assigned to this project");
-        }
 
-        unassignDeveloperFromTasksInProject(user, project);
+        users.forEach(user -> {
+            unassignDeveloperFromTasksInProject(user, project);
+            sendDeveloperUnassignedToProjectNotification(user, project);
+            projectAssignmentRepository.deleteByUserIdAndProject(user.id(), project);
+        });
 
-        sendDeveloperUnassignedToProjectNotification(user, project);
-
-        projectAssignmentRepository.deleteByUserIdAndProject(request.userId(), project);
+        return new ProjectAssignmentResponse(
+                request.projectId(),
+                users.stream()
+                        .map(UserResponse::id)
+                        .toList()
+        );
     }
 
     private void unassignDeveloperFromTasksInProject(UserResponse developer, Project project) {

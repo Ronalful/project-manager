@@ -1,12 +1,16 @@
 import apiClient from '@/api/index.js'
 import router from '@/router/index.js';
 import {tokenService} from '@/services/TokenService.js'
+import {useUserStore} from "@/stores/UserStore.js";
 
 export const authService = {
     async login({email, password}) {
         try {
             const response = await apiClient.post('/auth-api/login', {email, password})
-            tokenService.setTokens(response.accessToken, response.refreshToken)
+
+            const userStore = useUserStore()
+            await userStore.setAuth(response.data?.accessToken, response.data?.refreshToken)
+
             router.push('/')
             return {success: true, data: response.data}
         } catch (error) {
@@ -15,9 +19,6 @@ export const authService = {
                 // Проверяем, что это неактивированный аккаунт
                 if (error.response?.data === "User is disabled") {
                     const responseActivation = await this.initiateActivation({email, password})
-
-                    tokenService.setTempTokens(responseActivation.accessToken, responseActivation.refreshToken)
-
                     router.push('/login/activate')
                     return {success: false, requiresActivation: true}
                 } else if (error.response?.data === "Password expired") {
@@ -40,7 +41,8 @@ export const authService = {
         } catch (error) {
             console.warn('Logout request failed:', error)
         } finally {
-            tokenService.clearTokens()
+            const userStore = useUserStore()
+            userStore.clearAuth()
         }
     },
 
@@ -81,7 +83,8 @@ export const authService = {
     async initiateActivation({email, password}) {
         try {
             const response = await apiClient.post('/auth-api/initiate-activation', {email, password})
-            return response.data
+            tokenService.setTempTokens(response.data?.accessToken, response.data?.refreshToken)
+            return {success: true, data: response.data}
         } catch (error) {
             console.error('Activation initiation failed:', error)
             throw error
@@ -91,7 +94,7 @@ export const authService = {
     async confirmActivation({secretPhrase, password}) {
         try {
             const response = await apiClient.post('/auth-api/confirm-activation', {secretPhrase, password})
-            tokenService.setTokens(response.accessToken, response.refreshToken)
+            tokenService.clearTokens()
             return {success: true, data: response.data}
         } catch (error) {
             console.error('Activation initiation failed:', error)

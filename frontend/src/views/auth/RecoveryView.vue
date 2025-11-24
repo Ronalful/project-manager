@@ -1,48 +1,41 @@
-<script setup>
-
-import SubmitButton from "@/components/ui/SubmitButton.vue";
-</script>
-
 <template>
-  <div class="login-main-container">
-    <form @submit.prevent="handleChangePassword">
-      <div class="login-container">
-        <h2 class="login-second-title">Задайте новый пароль</h2>
+  <Container>
+    <template #second-title>Задайте новый пароль</template>
+    <template #content>
+      <form @submit.prevent="handleChangePassword" novalidate>
         <p v-if="errors.incorrect" class="error title">{{ errors.incorrect }}</p>
-        <div class="login-form-group">
-          <input
-              class="field"
-              id="password"
-              v-model="recoveryFormData.password"
-              type="password"
-              placeholder="Пароль"
-          />
-          <p v-if="errors.password" class="error">{{ errors.password }}</p>
-        </div>
-        <div class="login-form-group">
-          <input
-              class="field"
-              id="confirmPassword"
-              v-model="recoveryFormData.confirmPassword"
-              type="password"
-              placeholder="Подтвердите пароль"
-          />
-          <p v-if="errors.confirmPassword" class="error">{{ errors.confirmPassword }}</p>
-        </div>
+
+        <Input
+            ref="passwordField"
+            v-model="recoveryFormData.password"
+            type="password"
+            placeholder="Пароль"
+            required
+        ></Input>
+
+        <Input
+            id="confirmPassword"
+            ref="confirmPasswordField"
+            v-model="recoveryFormData.confirmPassword"
+            type="password"
+            placeholder="Подтвердите пароль"
+            required
+        ></Input>
 
         <SubmitButton>Сменить пароль</SubmitButton>
-
-      </div>
-    </form>
-  </div>
-
-
+      </form>
+    </template>
+  </Container>
 </template>
 
 <script>
 import {authService} from "@/services/AuthService.js";
+import SubmitButton from "@/components/ui/SubmitButton.vue";
+import Input from "@/components/ui/Input.vue";
+import Container from "@/components/Container.vue";
 
 export default {
+  components: {Container, Input, SubmitButton},
   data() {
     return {
       recoveryFormData: {
@@ -56,40 +49,37 @@ export default {
     async handleChangePassword() {
       this.errors = {};
 
-      if (this.validatePassword() && this.checkPasswordCompliance()) {
+      if (this.validateForm() && this.checkPasswordCompliance()) {
         const response = await authService.confirmResetPassword({
           password: this.recoveryFormData.password,
         })
-        if(response.error){
+        if (response.error) {
           this.errors.incorrect = 'Непредвиденная ошибка';
         }
       }
     },
 
-    validatePassword() {
-      const passwordField = document.getElementById('password');
-
-      if (!this.recoveryFormData.password) {
-        this.errors.password = 'Введите пароль';
-        passwordField.classList.add('field-error');
+    checkPasswordCompliance() {
+      if (this.recoveryFormData.password !== this.recoveryFormData.confirmPassword) {
+        this.errors.incorrect = 'Пароли не совпадают';
         return false;
       } else {
-        passwordField.classList.remove('field-error');
+        this.errors.incorrect = '';
         return true;
       }
     },
 
-    checkPasswordCompliance() {
-      const confirmPasswordField = document.getElementById('confirmPassword');
+    validateForm() {
+      const fields = this.$refs
+      let isValid = true
 
-      if (this.recoveryFormData.password !== this.recoveryFormData.confirmPassword) {
-        this.errors.confirmPassword = 'Пароли не совпадают';
-        confirmPasswordField.classList.add('field-error');
-        return false;
-      } else {
-        confirmPasswordField.classList.remove('field-error');
-        return true;
-      }
+      Object.values(fields).forEach(field => {
+        if (!field.isValid()) {
+          isValid = false
+        }
+      })
+
+      return isValid
     }
   }
 }

@@ -1,103 +1,88 @@
-<script setup>
-import '../../assets/styles/main.css'
-import SubmitButton from "@/components/ui/SubmitButton.vue";
-</script>
-
 <template>
-  <div class="login-main-container">
-    <form @submit.prevent="confirmActivationHandle">
-      <div class="login-container">
-        <h2 class="login-second-title">Осталось совсем чуть-чуть!</h2>
-        <h3 class="login-third-title">Придумайте
-          <a href="#password">новый пароль</a>
-          и
-          <a href="#secret">секретное слово</a>
-          для активации аккаунта</h3>
+  <Container>
+    <template #second-title>Осталось совсем чуть-чуть!</template>
+    <template #third-title>
+      Придумайте
+      <a href="#password">новый пароль</a>
+      и
+      <a href="#secret">секретное слово</a>
+      для активации аккаунта
+    </template>
+    <template #content>
+      <form @submit.prevent="confirmActivationHandle" novalidate>
         <p v-if="errors.others" class="error title">{{ errors.others }}</p>
-        <div class="login-form-group">
-          <input
-              class="field"
-              id="password"
-              v-model="activationData.password"
-              type="password"
-              placeholder="Новый пароль"
-          />
-          <p v-if="errors.password" class="error">{{ errors.password }}</p>
-        </div>
-        <div class="login-form-group">
-          <input
-              class="field"
-              id="secret"
-              v-model="activationData.secret"
-              type="text"
-              placeholder="Секретное слово"
-          />
-          <p v-if="errors.secret" class="error">{{ errors.secret }}</p>
-        </div>
+
+        <Input
+            id="password"
+            ref="passwordField"
+            v-model="activationFormData.password"
+            type="password"
+            placeholder="Пароль"
+            required
+        ></Input>
+
+        <Input
+            id="secret"
+            ref="secretField"
+            v-model="activationFormData.secret"
+            type="text"
+            placeholder="Секретное слово"
+            required
+        ></Input>
 
         <SubmitButton></SubmitButton>
-
-      </div>
-    </form>
-  </div>
+      </form>
+    </template>
+  </Container>
 </template>
 
 <script>
 import {authService} from "@/services/AuthService.js";
+import SubmitButton from "@/components/ui/SubmitButton.vue";
+import Input from "@/components/ui/Input.vue";
+import Container from "@/components/Container.vue";
 
 export default {
+  components: {Container, Input, SubmitButton},
   data() {
     return {
-      activationData: {
+      activationFormData: {
         password: '',
         secret: '',
       },
       errors: {}
     }
   },
-  methods:{
-    async confirmActivationHandle(){
+  methods: {
+    async confirmActivationHandle() {
       this.errors = {}
 
-      if (!this.validateSecret() || !this.validatePassword()) {
-        return;
+      if (!this.validateForm()) {
+        return false
       }
 
       try {
         const response = await authService.confirmActivation({
-          secretPhrase: this.activationData.secret,
-          password: this.activationData.password
+          secretPhrase: this.activationFormData.secret,
+          password: this.activationFormData.password
         })
-      } catch (error){
+      } catch (error) {
         this.errors.others = error.response?.data?.message || 'Ошибка активации аккаунта. Обратитесь к администратору.'
       }
     },
 
-    validateSecret() {
-      const secretField = document.getElementById('secret');
+    validateForm() {
+      const fields = this.$refs
+      let isValid = true
 
-      if (!this.activationData.secret) {
-        this.errors.secret = 'Введите секретное слово';
-        secretField.classList.add('field-error');
-        return false;
-      } else {
-        secretField.classList.remove('field-error');
-        return true;
-      }
-    },
+      Object.values(fields).forEach(field => {
+        if (!field.isValid()) {
+          isValid = false
+        }
+      })
 
-    validatePassword() {
-      const passwordField = document.getElementById('password');
-
-      if (!this.activationData.password) {
-        this.errors.password = 'Введите пароль';
-        passwordField.classList.add('field-error');
-        return false;
-      } else {
-        passwordField.classList.remove('field-error');
-        return true;
-      }
-    },
+      return isValid
+    }
   }
 }
 </script>

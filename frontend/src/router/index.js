@@ -1,44 +1,32 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import HomeView from "@/views/HomeView.vue";
-import {tokenService} from "@/services/TokenService.js";
+import {tokenService} from "@/services/TokenService.js"
+import authRouters from "./auth.js"
+import adminRouters from "./admin.js"
+import defaultRouters from "./default.js"
+import NotFoundView from "@/views/NotFoundView.vue";
+import {useUserStore} from "@/stores/UserStore.js";
+import AccessDeniedView from "@/views/AccessDeniedView.vue";
+
 
 const routes = [
+    ...authRouters,
+    ...adminRouters,
+    ...defaultRouters,
     {
-        path: '/',
-        name: 'Home',
-        component: HomeView,
-        meta: {requiresAuth: true}
+        path: '/404',
+        name: 'NotFound',
+        component: NotFoundView
     },
     {
-        path: '/login',
-        component: () => import('@/views/auth/AuthLayout.vue'),
-        meta: {requiresGuest: true},
-        children: [
-            {
-                path: '',
-                name: 'Login',
-                component: () => import('@/views/auth/LoginView.vue'),
-            },
-            {
-                path: 'forgot',
-                name: 'ForgotPassword',
-                component: () => import('@/views/auth/ForgotView.vue'),
-            },
-            {
-                path: 'recovery',
-                name: 'RecoveryPassword',
-                component: () => import('@/views/auth/RecoveryView.vue'),
-                meta: {requiresActivationToken: true},
-            },
-            {
-                path: 'activate',
-                name: 'AccountActivation',
-                component: () => import('@/views/auth/ActivateView.vue'),
-                meta: {requiresActivationToken: true},
-            },
-        ]
+        path: '/access-denied',
+        name: 'AccessDenied',
+        component: AccessDeniedView
     },
-
+    {
+        path: '/:catchAll(.*)',
+        name: 'CatchAll',
+        redirect: '/404'
+    }
 ]
 
 const router = createRouter({
@@ -46,25 +34,24 @@ const router = createRouter({
     routes: routes
 })
 
-router.beforeEach(async(to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     const isAuthenticated = tokenService.isAuthenticated()
     const isUsingTempTokens = tokenService.isUsingTempTokens()
 
-    if (to.meta.requiresActivationToken){
-        if(isAuthenticated){
+    if (to.meta.requiresActivationToken) {
+        if (isAuthenticated) {
             next({name: 'Home'})
             return
-        }
-        else{
-            if (!isUsingTempTokens){
+        } else {
+            if (!isUsingTempTokens) {
                 next({name: 'Login'})
                 return
             }
         }
     }
 
-    if (to.meta.requiresAuth){
-        if(!isAuthenticated) {
+    if (to.meta.requiresAuth) {
+        if (!isAuthenticated) {
             next({
                 name: 'Login',
                 query: {redirect: to.fullPath}
@@ -76,6 +63,14 @@ router.beforeEach(async(to, from, next) => {
     if (to.meta.requiresGuest) {
         if (isAuthenticated) {
             next({name: 'Home'})
+            return
+        }
+    }
+
+    if (to.meta.requiresAdmin) {
+        const userStore = useUserStore()
+        if (!userStore.isAdmin) {
+            next({name: 'AccessDenied'})
             return
         }
     }

@@ -13,6 +13,20 @@ import java.util.HashMap;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<String> handle(CommentNotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(CommentException.class)
+    public ResponseEntity<String> handle(CommentException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
+
     @ExceptionHandler(ProjectNotFoundException.class)
     public ResponseEntity<String> handle(ProjectNotFoundException e) {
         return ResponseEntity

@@ -92,7 +92,7 @@ export default {
         editing: false,
         deleting: false,
       }
-  }
+    }
   },
   methods: {
     async handleLoadProject() {
@@ -111,7 +111,7 @@ export default {
     async handleLoadDevelopers() {
       this.loading.users = true
       try {
-        const response = await userAdminService.getAllUsers()
+        const response = await userAdminService.getAllDevelopers()
         if (response.success) {
           this.prepareUsers(response.data, this.users);
         }
@@ -156,14 +156,9 @@ export default {
           description: this.project.description
         })
 
-        // if(response.success){
-        //   for(const developer of this.form.developers){
-        //     const assign = await projectAdminService.assignDeveloper({
-        //       projectId: response.data.id,
-        //       userId: developer
-        //     })
-        //   }
-        // }
+        if (response.success) {
+          await this.assignAndUnassignDevelopers()
+        }
       } catch (error) {
         console.error('Error creating project:', error)
       } finally {
@@ -171,7 +166,7 @@ export default {
         this.$refs.baseModal.close()
       }
     },
-    async deleteProject(){
+    async deleteProject() {
       try {
         this.loading.deleting = true
         const response = await projectAdminService.deleteProject(this.projectId)
@@ -193,8 +188,36 @@ export default {
       })
 
       return isValid
-    }
+    },
+
+    async assignAndUnassignDevelopers() {
+      const allDevs = new Set(this.users.map(dev => dev.value))
+      const currentDevs = new Set(this.actualDevelopers.map(dev => dev.value))
+      const selectedDevs = new Set(this.project.developers.map(dev => dev.value))
+
+      const addedDevs = [...selectedDevs].filter(devId => !currentDevs.has(devId))
+      const removedDevs = [...currentDevs].filter(devId => !selectedDevs.has(devId))
+
+      console.log('Added:', addedDevs)
+      console.log('Removed:', removedDevs)
+      console.log('Current:', [...currentDevs])
+      console.log('Selected:', [...selectedDevs])
+      if (addedDevs) {
+        const assign = await projectAdminService.assignDevelopers({
+          projectId: this.projectId,
+          userId: addedDevs
+        })
+      }
+
+      if (removedDevs) {
+        const unassign = await projectAdminService.unassignDevelopers({
+          projectId: this.projectId,
+          userId: removedDevs
+        })
+      }
+    },
   },
+
   mounted() {
     this.projectId = this.$route.params.id;
 

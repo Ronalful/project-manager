@@ -57,7 +57,6 @@ export default {
     this.projectId = this.$route.params.id;
 
     this.handleLoadProject()
-    this.handleLoadDevelopers()
   },
   methods: {
     async handleLoadProject() {
@@ -71,19 +70,6 @@ export default {
         console.error('Error loading projects:', error)
       } finally {
         this.loading = false
-      }
-    },
-    async handleLoadDevelopers() {
-      this.loadingUsers = true
-      try {
-        const response = await userAdminService.getAllUsers()
-        if (response.success) {
-          this.users = response.data;
-        }
-      } catch (error) {
-        console.error('Error loading users:', error)
-      } finally {
-        this.loadingUsers = false
       }
     },
     setProjectInfo(data) {

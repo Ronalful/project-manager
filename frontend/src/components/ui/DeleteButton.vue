@@ -29,6 +29,6 @@
 .submit__button:hover {
   background-color: var(--error-background);
   cursor: pointer;
-  border: none;
+  border: 1px solid var(--background2);
 }
 </style>

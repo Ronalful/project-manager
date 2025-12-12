@@ -30,7 +30,6 @@ const isActive = (path) => {
       <div class="header__container-inter">
         <section class="header__section">
           <div class="header__left-menu">
-            <MenuButton/>
             <LogoIcon/>
 
             <nav class="header__nav">

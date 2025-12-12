@@ -113,6 +113,13 @@ public class AdminUserService {
                 .toList();
     }
 
+    public List<AdminUserResponse> findAllByRole(Role role) {
+        return userRepository.findAll().stream()
+                .filter(user -> user.getRole().equals(role))
+                .map(mapper::fromUser)
+                .toList();
+    }
+
     public AdminUserResponse findById(Long userId) {
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(

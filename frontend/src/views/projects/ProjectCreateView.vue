@@ -80,13 +80,11 @@ export default {
           description: this.form.description
         })
 
-        if(response.success) {
-          for (const developer of this.form.developers) {
-            const assign = await projectAdminService.assignDeveloper({
-              projectId: response.data.id,
-              userId: developer.value
-            })
-          }
+        if (response.success) {
+          const assign = await projectAdminService.assignDevelopers({
+            projectId: response.data.id,
+            userIds: this.form.developers.map(developer => developer.value)
+          })
         }
       } catch (error) {
         console.error('Error creating project:', error)
@@ -96,10 +94,10 @@ export default {
       }
     },
 
-    async handleLoadDevelopers(){
+    async handleLoadDevelopers() {
       this.loadingUsers = true
       try {
-        const response = await userAdminService.getAllUsers()
+        const response = await userAdminService.getAllDevelopers()
         if (response.success) {
           this.prepareUsers(response.data);
         }
@@ -110,8 +108,8 @@ export default {
       }
     },
 
-    prepareUsers(data){
-      for (const userData of data){
+    prepareUsers(data) {
+      for (const userData of data) {
         this.users.push({
           value: userData.id,
           label: userData.firstname + ' ' + userData.lastname + ' (' + userData.email + ')'
@@ -119,7 +117,7 @@ export default {
       }
     },
 
-    validateForm(){
+    validateForm() {
       const fields = [this.$refs.nameField, this.$refs.descriptionField]
       let isValid = true
 

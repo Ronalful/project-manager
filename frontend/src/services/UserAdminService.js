@@ -9,4 +9,14 @@ export const userAdminService = {
             return {success: false, errorLoadProjects: true}
         }
     },
+
+    async getAllDevelopers(){
+        try {
+            const response = await apiClient.get('/admin/users' + '?role=USER')
+            return {success: true, data: response.data}
+        }
+        catch (error){
+            return {success: false, errorLoadProjects: true}
+        }
+    },
 }

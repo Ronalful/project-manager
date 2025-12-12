@@ -22,9 +22,9 @@ export const projectAdminService = {
         }
     },
 
-    async assignDeveloper({projectId, userId}){
+    async assignDevelopers({projectId, userIds}){
         try {
-            const response = await apiClient.post('/project-assignments/assign', {projectId, userId})
+            const response = await apiClient.post('/project-assignments/assign', {projectId, userIds})
             return {success: true, data: response.data}
         }
         catch (error){
@@ -32,9 +32,9 @@ export const projectAdminService = {
         }
     },
 
-    async unassignDeveloper({projectId, userId}){
+    async unassignDevelopers({projectId, userIds}){
         try {
-            const response = await apiClient.post('/project-assignments/unassign', {projectId, userId})
+            const response = await apiClient.post('/project-assignments/unassign', {projectId, userIds})
             return {success: true, data: response.data}
         }
         catch (error){

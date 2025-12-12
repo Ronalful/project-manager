@@ -3,6 +3,7 @@ package com.example.auth.controller;
 import com.example.auth.dto.user.AdminUserResponse;
 import com.example.auth.dto.user.CreateUserRequest;
 import com.example.auth.dto.user.UpdateUserRequest;
+import com.example.auth.entity.user.Role;
 import com.example.auth.service.AdminUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -79,7 +80,11 @@ public class AdminUserController {
             description = "Позволяет получить всех разработчиков",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    public ResponseEntity<List<AdminUserResponse>> getUsers() {
+    public ResponseEntity<List<AdminUserResponse>> getUsers(
+            @RequestParam(required = false) Role role) {
+        if (role != null)
+            return ResponseEntity.ok(service.findAllByRole(role));
+
         return ResponseEntity.ok(service.findAll());
     }
 

@@ -2,7 +2,7 @@ import apiClient from '@/api/index.js'
 export const userAdminService = {
     async getAllUsers(){
         try {
-            const response = await apiClient.get('/admin/users')
+            const response = await apiClient.get('/admin/users?role=USER')
             return {success: true, data: response.data}
         }
         catch (error){

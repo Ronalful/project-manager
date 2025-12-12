@@ -1,7 +1,5 @@
 <script setup>
-console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
 </script>
-
 
 <template>
   <BaseModal
@@ -17,10 +15,10 @@ console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
     <template #main>
       <form @submit.prevent="submitForm" class="modal-body" novalidate>
         <Input
-            ref="nameField"
-            v-model="form.name"
+            ref="titleField"
+            v-model="form.title"
             type="text"
-            placeholder="Название проекта"
+            placeholder="Название задачи"
             required
         />
 
@@ -33,7 +31,7 @@ console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
         <Textarea
             ref="descriptionField"
             v-model="form.description"
-            placeholder="Описание проекта"
+            placeholder="Описание задачи"
             required
         />
 

@@ -13,6 +13,7 @@ const route = useRoute()
 
 const menuItems = [
   { path: '/tasks', title: 'Задачи' },
+  { path: '/kanban', title: 'Доска'},
   { path: '/projects', title: 'Проекты' },
   { path: '/users', title: 'Пользователи' },
 ]

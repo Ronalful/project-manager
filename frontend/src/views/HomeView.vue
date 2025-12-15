@@ -5,16 +5,9 @@ import LogoutButton from "@/components/LogoutButton.vue";
 
 <template>
     <div class="wrapper">
-      <h1> HELLO </h1>
-      <h2> Let's go </h2>
-      <h3>Но только наступила осень</h3>
-      <h4>Назови мне свое имя</h4>
+      <h1> Добро пожаловать в Projo! </h1>
     </div>
-    <img alt="Vue logo" class="logo" src="../assets/logo.svg" width="125" height="125" />
-
-  <main>
-    <TheWelcome />
-  </main>
+    <img alt="Vue logo" class="logo" src="../assets/img/logo.png" width="300"/>
 </template>
 
 <style scoped>
@@ -24,6 +17,6 @@ header {
 
 .logo {
   display: block;
-  margin: 0 auto 2rem;
+  margin: 2rem auto 2rem;
 }
 </style>

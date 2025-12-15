@@ -13,9 +13,6 @@ import ThemeSwitch from "@/components/ThemeSwitch.vue";
 </template>
 
 <style scoped>
-.header__container{
-
-}
 
 .header__section{
   display: flex;

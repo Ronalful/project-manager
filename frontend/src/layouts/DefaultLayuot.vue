@@ -17,6 +17,6 @@ import DefaultFooter from "@/components/footers/DefaultFooter.vue";
 
 <style scoped>
 .default-container{
-  margin: 5em 10em 5em 10em;
+  margin: 5em 2em 5em 2em;
 }
 </style>

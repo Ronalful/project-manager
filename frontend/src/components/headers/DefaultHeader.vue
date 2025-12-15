@@ -14,6 +14,7 @@ const route = useRoute()
 const menuItems = [
   { path: '/tasks', title: 'Задачи' },
   { path: '/projects', title: 'Проекты' },
+  { path: '/users', title: 'Пользователи' },
 ]
 
 const isActive = (path) => {
@@ -30,7 +31,6 @@ const isActive = (path) => {
       <div class="header__container-inter">
         <section class="header__section">
           <div class="header__left-menu">
-            <MenuButton/>
             <LogoIcon/>
 
             <nav class="header__nav">
@@ -76,8 +76,8 @@ const isActive = (path) => {
 .header__nav-link {
   text-align: center;
   color: var(--font-main);
-  padding: 0.5rem;
-  margin: 0.5em;
+  padding: 20px;
+  margin: 2em;
 }
 
 .header__nav-link:hover {
